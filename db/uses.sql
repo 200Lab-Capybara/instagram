@@ -9,3 +9,5 @@ CREATE TABLE IF NOT EXISTS users(
     created_at timestamp,
     updated_at timestamp
 )
+
+CREATE INDEX users_email_index ON users(email)
