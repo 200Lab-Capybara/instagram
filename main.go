@@ -9,16 +9,20 @@ import (
 	"github.com/nghiatrann0502/instagram-clone/components/hasher"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 var (
-	httpAddr = ":8001"
+	httpAddr = os.Getenv("PORT")
+	//":8001"
+	connectionString = os.Getenv("CONNECTION_STRING")
+	//"capybara:my_secret@tcp(localhost:3306)/users?parseTime=true"
 )
 
 func main() {
 	// Connect to database
-	db, err := sql.Open("mysql", "capybara:my_secret@tcp(localhost:3306)/users?parseTime=true")
+	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		log.Fatal(err)
 	}
