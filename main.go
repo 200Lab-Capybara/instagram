@@ -1,17 +1,30 @@
 package main
 
 import (
+<<<<<<< HEAD
+	"database/sql"
+	"log"
+	"net/http"
+	"os"
+	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+=======
 	"github.com/gin-gonic/gin"
+>>>>>>> main
 	usermysql "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/repository/mysql"
 	userhttp "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/transport/http"
 	userusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/usecase"
 	"github.com/nghiatrann0502/instagram-clone/common"
 	"github.com/nghiatrann0502/instagram-clone/components/hasher"
+<<<<<<< HEAD
+=======
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
+>>>>>>> main
 )
 
 var (
@@ -41,6 +54,10 @@ func main() {
 	userHandler := userhttp.NewUserHandler(registerUseCase)
 	userHandler.RegisterV1Router(r)
 
+<<<<<<< HEAD
+	if err := http.ListenAndServe(httpAddr, mux); err != nil {
+		// log.Fatalf("failed to start server: %v", err)
+=======
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
@@ -50,5 +67,6 @@ func main() {
 	err = r.Run(httpAddr)
 	if err != nil {
 		log.Fatal(err)
+>>>>>>> main
 	}
 }
