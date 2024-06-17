@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	usermysql "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/repository/mysql"
 	userhttp "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/transport/http"
@@ -21,6 +22,7 @@ var (
 )
 
 func main() {
+	r := gin.Default()
 	// Connect to database
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
@@ -36,7 +38,6 @@ func main() {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 
-	mux := http.NewServeMux()
 	bcrypt := hasher.NewBcryptHasher()
 
 	userStorage, err := usermysql.NewMySQLStorage(db)
@@ -45,11 +46,17 @@ func main() {
 	}
 	userUseCase := userusecase.NewUserUseCase(userStorage, bcrypt)
 	userHandler := userhttp.NewUserHandler(userUseCase)
-	userHandler.RegisterRouter(mux)
 
-	log.Println("starting url server on", httpAddr)
+	userHandler.RegisterGinHandler(r)
 
-	if err := http.ListenAndServe(httpAddr, mux); err != nil {
-		log.Fatalf("failed to start server: %v", err)
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
+	err = r.Run(httpAddr)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
