@@ -4,5 +4,5 @@ CREATE TABLE hashtags (
     `post_id` varchar(36) NOT NULL,
     `created_at` timestamp(6) NULL DEFAULT NULL,
     `updated_at` timestamp(6) NULL DEFAULT NULL,
-
+    PRIMARY KEY (`id`),
 );
