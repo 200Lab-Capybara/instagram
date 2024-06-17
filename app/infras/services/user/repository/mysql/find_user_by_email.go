@@ -9,7 +9,7 @@ import (
 func (m *mySQLStorage) FindUserByEmail(ctx context.Context, email string) (*usermodel.User, error) {
 	var data usermodel.User
 
-	db := m.db.GetConnection().Table(usermodel.User{}.TableName())
+	db := m.db.GetConnection().Table(data.TableName())
 	if err := db.Where("email = ?", email).First(&data).Error; err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
 			return nil, usermodel.UserNotFound

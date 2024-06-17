@@ -28,17 +28,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	bcrypt := hasher.NewBcryptHasher()
-
 	con := common.NewSQLDatabase(db)
 
+	// Create user storage
 	userStorage, err := usermysql.NewMySQLStorage(con)
 	if err != nil {
 		log.Fatal(err)
 	}
-	userUseCase := userusecase.NewUserUseCase(userStorage, bcrypt)
-	userHandler := userhttp.NewUserHandler(userUseCase)
+
+	registerUseCase := userusecase.NewRegisterUseCase(userStorage, bcrypt)
+	userHandler := userhttp.NewUserHandler(registerUseCase)
 	userHandler.RegisterV1Router(r)
 
 	r.GET("/ping", func(c *gin.Context) {

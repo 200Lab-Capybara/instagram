@@ -2,23 +2,17 @@ package userhttp
 
 import (
 	"github.com/gin-gonic/gin"
-	userinterface "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/interface"
-	"net/http"
+	userusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/usecase"
 )
 
 type userHandler struct {
-	userUseCase userinterface.UserUseCase
+	registerUseCase userusecase.RegisterUseCase
 }
 
-func NewUserHandler(userUseCase userinterface.UserUseCase) *userHandler {
+func NewUserHandler(registerUseCase userusecase.RegisterUseCase) *userHandler {
 	return &userHandler{
-		userUseCase: userUseCase,
+		registerUseCase: registerUseCase,
 	}
-}
-
-func (u *userHandler) RegisterRouter(mux *http.ServeMux) {
-	mux.HandleFunc("/api/v1/register", u.RegisterHandler)
-	mux.HandleFunc("/api/v1/ping", u.PingHandler)
 }
 
 func (u *userHandler) RegisterV1Router(r *gin.Engine) {
