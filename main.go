@@ -1,17 +1,17 @@
 package main
 
 import (
-	"database/sql"
-	"log"
-	"net/http"
-	"os"
-	"time"
-
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/gin-gonic/gin"
 	usermysql "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/repository/mysql"
 	userhttp "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/transport/http"
 	userusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/usecase"
+	"github.com/nghiatrann0502/instagram-clone/common"
 	"github.com/nghiatrann0502/instagram-clone/components/hasher"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"log"
+	"net/http"
+	"os"
 )
 
 var (
@@ -22,35 +22,33 @@ var (
 )
 
 func main() {
+	r := gin.Default()
 	// Connect to database
-	db, err := sql.Open("mysql", connectionString)
+	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
-
-	mux := http.NewServeMux()
 	bcrypt := hasher.NewBcryptHasher()
+	con := common.NewSQLDatabase(db)
 
-	userStorage, err := usermysql.NewMySQLStorage(db)
+	// Create user storage
+	userStorage, err := usermysql.NewMySQLStorage(con)
 	if err != nil {
 		log.Fatal(err)
 	}
-	userUseCase := userusecase.NewUserUseCase(userStorage, bcrypt)
-	userHandler := userhttp.NewUserHandler(userUseCase)
-	userHandler.RegisterRouter(mux)
 
-	log.Println("starting url server on", httpAddr)
+	registerUseCase := userusecase.NewRegisterUseCase(userStorage, bcrypt)
+	userHandler := userhttp.NewUserHandler(registerUseCase)
+	userHandler.RegisterV1Router(r)
 
-	if err := http.ListenAndServe(httpAddr, mux); err != nil {
-		// log.Fatalf("failed to start server: %v", err)
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
+	err = r.Run(httpAddr)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
