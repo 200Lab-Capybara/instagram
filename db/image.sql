@@ -6,9 +6,9 @@ create table images
     size         int                                 not null,
     width        int                                 not null,
     height       int                                 not null,
-    status       enum ('uploaded', 'created')        not null,
+    status       enum ('uploading', 'uploaded')      not null,
     create_at    timestamp default CURRENT_TIMESTAMP not null,
-    updated_at   timestamp null,
+    updated_at   timestamp                           null,
     storage_name varchar(255)                        not null,
     user_id      varchar(36)                         not null
 );
