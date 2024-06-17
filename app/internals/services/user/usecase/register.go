@@ -37,6 +37,7 @@ func (u *useCase) Register(ctx context.Context, user *usermodel.UserCreation) (*
 		Email:     user.Email,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
+		Role:      usermodel.RoleAdmin,
 		Password:  hashedPassword,
 		Salt:      salt,
 	}

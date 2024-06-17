@@ -21,8 +21,7 @@ func (u *userHandler) RegisterRouter(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/ping", u.PingHandler)
 }
 
-func (u *userHandler) RegisterGinHandler(r *gin.Engine) {
+func (u *userHandler) RegisterV1Router(r *gin.Engine) {
 	v1 := r.Group("/api/v1")
-
 	v1.POST("/register", u.GinRegisterHandler)
 }

@@ -1,17 +1,17 @@
 package main
 
 import (
-	"database/sql"
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
 	usermysql "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/repository/mysql"
 	userhttp "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/transport/http"
 	userusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/usecase"
+	"github.com/nghiatrann0502/instagram-clone/common"
 	"github.com/nghiatrann0502/instagram-clone/components/hasher"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 var (
@@ -24,30 +24,22 @@ var (
 func main() {
 	r := gin.Default()
 	// Connect to database
-	db, err := sql.Open("mysql", connectionString)
+	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
 
 	bcrypt := hasher.NewBcryptHasher()
 
-	userStorage, err := usermysql.NewMySQLStorage(db)
+	con := common.NewSQLDatabase(db)
+
+	userStorage, err := usermysql.NewMySQLStorage(con)
 	if err != nil {
 		log.Fatal(err)
 	}
 	userUseCase := userusecase.NewUserUseCase(userStorage, bcrypt)
 	userHandler := userhttp.NewUserHandler(userUseCase)
-
-	userHandler.RegisterGinHandler(r)
+	userHandler.RegisterV1Router(r)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
