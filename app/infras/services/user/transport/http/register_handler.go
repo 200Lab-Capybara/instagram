@@ -1,30 +1,39 @@
 package userhttp
 
 import (
+	"github.com/gin-gonic/gin"
 	usermodel "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/model"
-	"github.com/nghiatrann0502/instagram-clone/common"
 	"net/http"
 )
 
-func (u *userHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+func (u *userHandler) GinRegisterHandler(ctx *gin.Context) {
 	dataCreation := usermodel.UserCreation{}
 
-	err := common.ReadJSON(r, &dataCreation)
+	err := ctx.ShouldBindJSON(&dataCreation)
 	if err != nil {
-		common.WriteError(w, http.StatusBadRequest, "invalid request")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid request",
+		})
 		return
 	}
 
 	if err := dataCreation.Validate(); err != nil {
-		common.WriteError(w, http.StatusBadRequest, err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
 
-	id, err := u.userUseCase.Register(r.Context(), &dataCreation)
+	id, err := u.registerUseCase.Execute(ctx.Request.Context(), &dataCreation)
+
 	if err != nil {
-		common.WriteError(w, http.StatusBadRequest, err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
 
-	common.SimpleSuccess(w, http.StatusOK, id)
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": id,
+	})
 }
