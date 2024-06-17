@@ -3,6 +3,7 @@ package usermodel
 import (
 	"errors"
 	"github.com/google/uuid"
+	"github.com/nghiatrann0502/instagram-clone/common"
 	"time"
 )
 
@@ -18,13 +19,18 @@ var (
 )
 
 type User struct {
-	ID        uuid.UUID  `json:"id"`
-	Email     string     `json:"email"`
-	FirstName string     `json:"first_name"`
-	LastName  string     `json:"last_name"`
-	Password  string     `json:"password"`
-	Salt      string     `json:"salt"`
-	Role      string     `json:"role"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	ID        uuid.UUID         `json:"id" gorm:"column:id"`
+	Email     string            `json:"email" gorm:"column:email"`
+	FirstName string            `json:"first_name" gorm:"column:first_name"`
+	LastName  string            `json:"last_name" gorm:"column:last_name"`
+	Password  string            `json:"password" gorm:"column:password"`
+	Salt      string            `json:"salt" gorm:"column:salt"`
+	Role      common.UserRole   `json:"role" gorm:"column:role"`
+	Status    common.UserStatus `json:"status" gorm:"column:status"`
+	CreatedAt *time.Time        `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt *time.Time        `json:"updated_at" gorm:"column:updated_at"`
+}
+
+func (User) TableName() string {
+	return "users"
 }
