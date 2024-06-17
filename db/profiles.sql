@@ -6,5 +6,7 @@ CREATE TABLE `profiles` (
     `count_following` int NOT NULL DEFAULT '0',
     `count_followers` int NOT NULL DEFAULT '0',
     `count_posts` int NOT NULL DEFAULT '0',
-    PRIMARY KEY (`id`)
+    `user_id` varchar(36) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
