@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	usermysql "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/repository/mysql"
 	userhttp "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/transport/http"
 	userusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/usecase"

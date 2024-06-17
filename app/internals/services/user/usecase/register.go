@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	usermodel "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/model"
+	"github.com/nghiatrann0502/instagram-clone/common"
 	"github.com/nghiatrann0502/instagram-clone/components/hasher"
 )
 
@@ -59,7 +60,8 @@ func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreat
 		Email:     user.Email,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
-		Role:      usermodel.RoleUser,
+		Role:      common.RoleUser,
+		Status:    common.Active,
 		Password:  hashedPassword,
 		Salt:      salt,
 	}

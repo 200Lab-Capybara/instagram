@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: my_secret
-      MYSQL_DATABASE: users
+      MYSQL_DATABASE: instagram
       MYSQL_USER: capybara
       MYSQL_PASSWORD: my_secret
     ports:
