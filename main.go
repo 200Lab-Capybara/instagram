@@ -2,15 +2,16 @@ package main
 
 import (
 	"database/sql"
+	"log"
+	"net/http"
+	"os"
+	"time"
+
 	_ "github.com/go-sql-driver/mysql"
 	usermysql "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/repository/mysql"
 	userhttp "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/transport/http"
 	userusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/usecase"
 	"github.com/nghiatrann0502/instagram-clone/components/hasher"
-	"log"
-	"net/http"
-	"os"
-	"time"
 )
 
 var (
@@ -50,6 +51,6 @@ func main() {
 	log.Println("starting url server on", httpAddr)
 
 	if err := http.ListenAndServe(httpAddr, mux); err != nil {
-		log.Fatalf("failed to start server: %v", err)
+		// log.Fatalf("failed to start server: %v", err)
 	}
 }
