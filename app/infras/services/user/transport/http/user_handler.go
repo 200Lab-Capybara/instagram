@@ -2,7 +2,7 @@ package userhttp
 
 import (
 	"github.com/gin-gonic/gin"
-	userusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/usecase"
+	userusecase "instagram/app/internals/services/user/usecase"
 )
 
 type userHandler struct {
@@ -15,7 +15,6 @@ func NewUserHandler(registerUseCase userusecase.RegisterUseCase) *userHandler {
 	}
 }
 
-func (u *userHandler) RegisterV1Router(r *gin.Engine) {
-	v1 := r.Group("/api/v1")
+func (u *userHandler) RegisterV1Router(v1 *gin.RouterGroup) {
 	v1.POST("/register", u.GinRegisterHandler)
 }

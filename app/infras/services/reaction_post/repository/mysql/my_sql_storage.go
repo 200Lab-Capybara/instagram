@@ -1,7 +1,7 @@
 package reactionpostmysql
 
 import (
-	"github.com/nghiatrann0502/instagram-clone/common"
+	"instagram/common"
 )
 
 type mySQLStorage struct {

@@ -2,8 +2,8 @@ package usermysql
 
 import (
 	"context"
-	usermodel "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/model"
 	"gorm.io/gorm"
+	usermodel "instagram/app/internals/services/user/model"
 )
 
 func (m *mySQLStorage) FindUserByEmail(ctx context.Context, email string) (*usermodel.User, error) {

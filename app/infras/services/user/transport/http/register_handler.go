@@ -2,7 +2,7 @@ package userhttp
 
 import (
 	"github.com/gin-gonic/gin"
-	usermodel "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/model"
+	usermodel "instagram/app/internals/services/user/model"
 	"net/http"
 )
 

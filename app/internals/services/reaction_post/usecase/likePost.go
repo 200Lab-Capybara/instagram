@@ -3,7 +3,7 @@ package reactionpostusecase
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/nghiatrann0502/instagram-clone/app/internals/services/reaction_post/model"
+	"instagram/app/internals/services/reaction_post/model"
 )
 
 type reactionPostUseCase struct {

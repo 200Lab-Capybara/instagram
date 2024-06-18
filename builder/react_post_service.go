@@ -2,11 +2,11 @@ package builder
 
 import (
 	"github.com/gin-gonic/gin"
-	reactionpostmysql "github.com/nghiatrann0502/instagram-clone/app/infras/services/reaction_post/repository/mysql"
-	"github.com/nghiatrann0502/instagram-clone/app/infras/services/reaction_post/repository/rpc_client"
-	reactionposthttp "github.com/nghiatrann0502/instagram-clone/app/infras/services/reaction_post/transport/http"
-	reactionpostusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/reaction_post/usecase"
-	"github.com/nghiatrann0502/instagram-clone/common"
+	reactionpostmysql "instagram/app/infras/services/reaction_post/repository/mysql"
+	"instagram/app/infras/services/reaction_post/repository/rpc_client"
+	reactionposthttp "instagram/app/infras/services/reaction_post/transport/http"
+	reactionpostusecase "instagram/app/internals/services/reaction_post/usecase"
+	"instagram/common"
 )
 
 func BuildReactPostService(con common.SQLDatabase, v1 *gin.RouterGroup) {
