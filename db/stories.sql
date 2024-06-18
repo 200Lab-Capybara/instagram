@@ -1,12 +1,12 @@
 create table stories
 (
-    id            varchar(36)                         not null
+    id            varchar(36)   not null
         primary key,
-    content_story varchar(255)                        null,
-    user_id       varchar(36)                         not null,
-    created_at    timestamp default CURRENT_TIMESTAMP null,
-    expires_time  timestamp                           null,
-    react_count   int       default 0                 not null,
-    updated_at    timestamp                           null
+    user_id       varchar(36)   not null,
+    content_story varchar(255)  null,
+    react_count   int default 0 not null,
+    expires_time  datetime(6)   null,
+    created_at    datetime(6)   null,
+    updated_at    datetime(6)   null
 );
 
