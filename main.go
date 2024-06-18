@@ -6,6 +6,7 @@ import (
 	usermysql "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/repository/mysql"
 	userhttp "github.com/nghiatrann0502/instagram-clone/app/infras/services/user/transport/http"
 	userusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/usecase"
+	"github.com/nghiatrann0502/instagram-clone/builder"
 	"github.com/nghiatrann0502/instagram-clone/common"
 	"github.com/nghiatrann0502/instagram-clone/components/hasher"
 	"gorm.io/driver/mysql"
@@ -24,6 +25,7 @@ var (
 
 func main() {
 	r := gin.Default()
+	v1 := r.Group("/v1")
 	// Connect to database
 	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if err != nil {
@@ -41,6 +43,8 @@ func main() {
 	registerUseCase := userusecase.NewRegisterUseCase(userStorage, bcrypt)
 	userHandler := userhttp.NewUserHandler(registerUseCase)
 	userHandler.RegisterV1Router(r)
+
+	builder.BuildReactPostService(con, v1)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
