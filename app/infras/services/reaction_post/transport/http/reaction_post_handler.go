@@ -2,7 +2,7 @@ package reactionposthttp
 
 import (
 	"github.com/gin-gonic/gin"
-	reactionpostusecase "github.com/nghiatrann0502/instagram-clone/app/internals/services/reaction_post/usecase"
+	reactionpostusecase "instagram/app/internals/services/reaction_post/usecase"
 )
 
 type reactionPostHandler struct {

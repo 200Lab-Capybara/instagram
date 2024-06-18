@@ -1,16 +1,15 @@
 package usermysql
 
 import (
-	"github.com/nghiatrann0502/instagram-clone/common"
+	"instagram/common"
 )
 
 type mySQLStorage struct {
 	db common.SQLDatabase
 }
 
-func NewMySQLStorage(db common.SQLDatabase) (*mySQLStorage, error) {
-
+func NewMySQLStorage(db common.SQLDatabase) *mySQLStorage {
 	return &mySQLStorage{
 		db: db,
-	}, nil
+	}
 }

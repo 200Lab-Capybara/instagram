@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
-	usermodel "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/model"
-	"github.com/nghiatrann0502/instagram-clone/common"
-	"github.com/nghiatrann0502/instagram-clone/components/hasher"
+	usermodel "instagram/app/internals/services/user/model"
+	"instagram/common"
+	"instagram/components/hasher"
 )
 
 type registerUseCase struct {
