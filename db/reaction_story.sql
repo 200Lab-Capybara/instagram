@@ -1,4 +1,4 @@
-create table react_story
+create table react_stories
 (
     user_id    varchar(36) not null,
     story_id   varchar(36) not null,
