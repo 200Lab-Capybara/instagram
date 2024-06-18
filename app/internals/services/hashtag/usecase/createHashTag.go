@@ -21,14 +21,14 @@ type CreateHashTagUseCase interface{
 }
 
 type CreateHashTagRepository interface{
-	CheckNullHashTag(ctx context.Context, hashtag []string) ([]string, error)
+	FormatHashTag(ctx context.Context, hashtag []string) ([]string, error)
 	GetHashTag(ctx context.Context, hashtag []string) ([]*hashtagmodel.Hashtag, error)
 	MapHashTag(ctx context.Context, hashtag *hashtagmodel.HashtagPost) (*hashtagmodel.HashtagPost,error)
 }
 
 func (u *createHashTagUseCase) Execute(ctx context.Context, postId uuid.UUID, hashtags []string) ([]*hashtagmodel.HashtagPost, error){
 	
-	nonNullHashtags, err := u.createHashTagRepository.CheckNullHashTag(ctx, hashtags)
+	nonNullHashtags, err := u.createHashTagRepository.FormatHashTag(ctx, hashtags)
 	if err != nil {
 		return nil, err
 	}
