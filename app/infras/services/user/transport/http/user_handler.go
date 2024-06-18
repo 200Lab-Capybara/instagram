@@ -16,5 +16,5 @@ func NewUserHandler(registerUseCase userusecase.RegisterUseCase) *userHandler {
 }
 
 func (u *userHandler) RegisterV1Router(v1 *gin.RouterGroup) {
-	v1.POST("/register", u.GinRegisterHandler)
+	v1.POST("/register", u.RegisterHandler())
 }
