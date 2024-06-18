@@ -7,5 +7,6 @@ CREATE TABLE `notifications` (
     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `payload` json DEFAULT NULL,
     `status` enum('read','sent','created') NOT NULL,
-    UNIQUE KEY `id` (`id`)
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`) USING BTREE
 )
