@@ -3,7 +3,7 @@ package usermodel
 import (
 	"errors"
 	"github.com/google/uuid"
-	"github.com/nghiatrann0502/instagram-clone/common"
+	"instagram/common"
 	"time"
 )
 

@@ -1,4 +1,4 @@
-CREATE TABLE `hastag` (
+CREATE TABLE `hashtags` (
   `id` varchar(36) NOT NULL,
   `hashtag` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `created_at` datetime(6) NULL DEFAULT NULL,

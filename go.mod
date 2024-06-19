@@ -1,4 +1,4 @@
-module github.com/nghiatrann0502/instagram-clone
+module instagram
 
 go 1.22.2
 

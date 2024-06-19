@@ -9,13 +9,3 @@ type SQLDatabase interface {
 type database struct {
 	con *gorm.DB
 }
-
-func NewSQLDatabase(con *gorm.DB) SQLDatabase {
-	return &database{
-		con: con,
-	}
-}
-
-func (d *database) GetConnection() *gorm.DB {
-	return d.con.Session(&gorm.Session{NewDB: true})
-}
