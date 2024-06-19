@@ -1,4 +1,4 @@
-package usermysql
+package reactionpostmysql
 
 import (
 	"instagram/common"
