@@ -8,6 +8,7 @@ import (
 	"instagram/builder"
 	"instagram/common"
 	"instagram/components/hasher"
+	"instagram/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +23,7 @@ var (
 
 func main() {
 	r := gin.Default()
+	r.Use(middleware.HandleError())
 	v1 := r.Group("/v1")
 	// Connect to database
 	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
