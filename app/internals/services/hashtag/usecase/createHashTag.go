@@ -1,6 +1,5 @@
 package hashtagusercase
 
-
 import (
 	"context"
 	"github.com/google/uuid"
@@ -21,8 +20,8 @@ type CreateHashTagUseCase interface{
 }
 
 type CreateHashTagRepository interface{
-	FormatHashTag(ctx context.Context, hashtag []string) ([]string, error)
-	GetHashTag(ctx context.Context, hashtag []string) ([]*hashtagmodel.Hashtag, error)
+	FormatHashTag(ctx context.Context, hashtag []string) ([]*hashtagmodel.Hashtag, error)
+	// GetHashTag(ctx context.Context, hashtag []string) ([]*hashtagmodel.Hashtag, error)
 	MapHashTag(ctx context.Context, hashtag *hashtagmodel.HashtagPost) (*hashtagmodel.HashtagPost,error)
 }
 
@@ -34,14 +33,14 @@ func (u *createHashTagUseCase) Execute(ctx context.Context, postId uuid.UUID, ha
 	}
 
 	// Retrieve existing or create new hashtags
-	hashtagEntries, err := u.createHashTagRepository.GetHashTag(ctx, nonNullHashtags)
-	if err != nil {
-		return nil, err
-	}
+	// hashtagEntries, err := u.createHashTagRepository.GetHashTag(ctx, nonNullHashtags)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// Map each hashtag to the postId
 	var mappedHashtags []*hashtagmodel.HashtagPost
-	for _, hashtag := range hashtagEntries {
+	for _, hashtag := range nonNullHashtags {
 		mappedHashtag, err := u.createHashTagRepository.MapHashTag(ctx, &hashtagmodel.HashtagPost{
 			Hashtag_ID: hashtag.ID,
 			Post_ID:    postId,
