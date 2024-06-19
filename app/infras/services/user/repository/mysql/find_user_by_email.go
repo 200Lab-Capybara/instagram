@@ -4,6 +4,7 @@ import (
 	"context"
 	"gorm.io/gorm"
 	usermodel "instagram/app/internals/services/user/model"
+	"instagram/common"
 )
 
 func (m *mySQLStorage) FindUserByEmail(ctx context.Context, email string) (*usermodel.User, error) {
@@ -14,7 +15,7 @@ func (m *mySQLStorage) FindUserByEmail(ctx context.Context, email string) (*user
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
 			return nil, usermodel.UserNotFound
 		} else {
-			return nil, err
+			return nil, common.ErrDB(err)
 		}
 	}
 
