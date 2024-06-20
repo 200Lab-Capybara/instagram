@@ -1,47 +1,46 @@
-package usecase
+package usecaseprofile
 
 import (
 	"context"
 	"github.com/google/uuid"
 	"instagram/app/internals/services/profile/model"
+	"instagram/common"
 )
 
 type SetupRepository interface {
-	SetupNewProfile(ctx context.Context, profile *model.Profile) (uuid.UUID, error)
+	InsertProfile(ctx context.Context, profile *model.Profile) (*uuid.UUID, error)
 }
 
 type setupUseCase struct {
 	setupRepository SetupRepository
 }
 
-// TODO compare setup vs register
 func NewSetupUseCase(setuprepository SetupRepository) SetupUseCase {
-	return nil
+	return &setupUseCase{
+		setupRepository: setuprepository,
+	}
 }
 
 type SetupUseCase interface {
 	Execute(ctx context.Context, profile *model.ProfileCreation) (*uuid.UUID, error)
 }
 
-// TODO compare setup vs register
 func (p *setupUseCase) Execute(ctx context.Context, profile *model.ProfileCreation) (*uuid.UUID, error) {
 	id, _ := uuid.NewV7()
 
+	defaultGender := model.Male
 	data := &model.Profile{
-		ID:          id,
-		DateOfBirth: profile.DateOfBirth,
-		//TODO comongender?? or model.ProfileGender
-		Genders: model.ProfileGender(),
-		Avatar:  profile.Avatar,
-		//TODO how to count ???
+		ID:             id,
+		DateOfBirth:    profile.DateOfBirth,
+		Genders:        &defaultGender,
+		Avatar:         profile.Avatar,
 		CountFollowers: 0,
 		CountFollowing: 0,
 		CountPosts:     0,
-		//TODO how to take userId
-		UserId: 01902f82-a74f-7042-8b3b-b9c7c57c10c7,
+		UserId:         common.User1UUID,
 	}
 
-	_, err := p.setupRepository.SetupNewProfile(ctx, data)
+	_, err := p.setupRepository.InsertProfile(ctx, data)
 	if err != nil {
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-package mysql
+package mysqlprofile
 
 import "instagram/common"
 
