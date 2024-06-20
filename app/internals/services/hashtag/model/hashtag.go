@@ -1,4 +1,3 @@
-
 package hashtagmodel
 
 import (
@@ -7,8 +6,12 @@ import (
 )
 
 type Hashtag struct {
-	ID        uuid.UUID  `json:"id"`
-	Hashtag   string     `json:"hashtag"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Hashtag   string    `json:"hashtag"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (Hashtag) TableName() string {
+	return "hashtags"
 }
