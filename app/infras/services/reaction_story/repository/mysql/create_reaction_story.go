@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (m *mySQLStorage) createNewReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error) {
+func (m *mySQLStorage) CreateNewReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error) {
 	db := m.db.GetConnection()
 	newRow := model.ReactionStory{
 		UserId:     uid,

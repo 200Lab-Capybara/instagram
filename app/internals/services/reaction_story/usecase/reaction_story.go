@@ -1,4 +1,4 @@
-package usecase
+package reactionstoryusecase
 
 import (
 	"context"
@@ -8,19 +8,19 @@ import (
 )
 
 type reactionStoryUC struct {
-	reactionStoryRepo reactionStoryRepository
+	reactionStoryRepo IReactionStoryRepository
 	storyRepo         getStoryRepository
 }
 
-func NewInsertReactionStoryUserCase(reactRepo reactionStoryRepository, storyRepo getStoryRepository) InsertReactionStoryUserCase {
+func NewInsertReactionStoryUserCase(reactRepo IReactionStoryRepository, storyRepo getStoryRepository) InsertReactionStoryUserCase {
 	return &reactionStoryUC{
 		reactRepo,
 		storyRepo,
 	}
 }
 
-func (u *reactionStoryUC) Execute(ctx context.Context, story *model.ReactionStory) (bool, error) {
-	existStory, err := u.storyRepo.FindStoryById(ctx, story.StoryId)
+func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId uuid.UUID) (bool, error) {
+	existStory, err := u.storyRepo.FindStoryById(ctx, storyId)
 	if err != nil {
 		if !errors.Is(err, model.StoryNotFound) {
 			return false, model.StoryNotFound
@@ -31,17 +31,17 @@ func (u *reactionStoryUC) Execute(ctx context.Context, story *model.ReactionStor
 		return false, model.StoryNotFound
 	}
 
-	existReactStory, err := u.reactionStoryRepo.hasBeenReactionStory(ctx, story.StoryId, story.UserId)
+	existReactStory, err := u.reactionStoryRepo.HasBeenReactionStory(ctx, storyId, userId)
 	if err != nil {
 		return false, err
 	}
 	if existReactStory != nil {
-		_, err = u.reactionStoryRepo.delReactionStory(ctx, story.StoryId, story.UserId)
+		_, err = u.reactionStoryRepo.DelReactionStory(ctx, storyId, userId)
 		if err != nil {
 			return false, err
 		}
 	} else {
-		_, err = u.reactionStoryRepo.createNewReactionStory(ctx, story.StoryId, story.UserId)
+		_, err = u.reactionStoryRepo.CreateNewReactionStory(ctx, storyId, userId)
 		if err != nil {
 			return false, err
 		}
@@ -51,13 +51,13 @@ func (u *reactionStoryUC) Execute(ctx context.Context, story *model.ReactionStor
 }
 
 type InsertReactionStoryUserCase interface {
-	Execute(ctx context.Context, user *model.ReactionStory) (bool, error)
+	Execute(ctx context.Context, storyId uuid.UUID, userId uuid.UUID) (bool, error)
 }
 
-type reactionStoryRepository interface {
-	createNewReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
-	hasBeenReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (*model.ReactionStory, error)
-	delReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
+type IReactionStoryRepository interface {
+	CreateNewReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
+	HasBeenReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (*model.ReactionStory, error)
+	DelReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
 }
 type getStoryRepository interface {
 	FindStoryById(ctx context.Context, sid uuid.UUID) (*model.Story, error)
