@@ -24,7 +24,12 @@ func (b *bcryptHasher) Hash(password, salt string) (string, error) {
 }
 
 func (b *bcryptHasher) Verify(password, salt, hash string) bool {
-	return password == hash
+	str := fmt.Sprintf("%s.%s", password, salt)
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(str))
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func (b *bcryptHasher) GenSalt(len int8) (string, error) {
