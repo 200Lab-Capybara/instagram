@@ -7,6 +7,7 @@ import (
 
 type Profile struct {
 	ID             uuid.UUID      `json:"id" gorm:"colum:id"`
+	DateOfBirth    time.Time      `json:"date_of_birth" gorm:"colum:date_of_birth"`
 	UserId         uuid.UUID      `json:"userId" gorm:"colum:user_id"`
 	Genders        *ProfileGender `json:"gender" gorm:"colum:gender"`
 	Avatar         string         `json:"avatar" gorm:"colum:avatar"`
