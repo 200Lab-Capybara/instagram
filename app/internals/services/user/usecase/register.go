@@ -37,22 +37,16 @@ func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreat
 	}
 
 	if exists != nil {
-		return nil, usermodel.UserAlreadyExists
+		return nil, common.NewCustomError(usermodel.UserAlreadyExists, usermodel.UserAlreadyExists.Error(), "user_already_exists")
 	}
 
-	id, err := uuid.NewV7()
-	if err != nil {
-		return nil, err
-	}
+	id, _ := uuid.NewV7()
 
-	salt, err := u.hasher.GenSalt(16)
-	if err != nil {
-		return nil, err
-	}
+	salt, _ := u.hasher.GenSalt(16)
 
 	hashedPassword, err := u.hasher.Hash(user.Password, salt)
 	if err != nil {
-		return nil, err
+		return nil, common.ErrInvalidRequest(err)
 	}
 
 	data := &usermodel.User{

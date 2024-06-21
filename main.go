@@ -8,6 +8,7 @@ import (
 	"instagram/builder"
 	"instagram/common"
 	"instagram/components/hasher"
+	"instagram/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +23,7 @@ var (
 
 func main() {
 	r := gin.Default()
+	r.Use(middleware.HandleError())
 	v1 := r.Group("/v1")
 	// Connect to database
 	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
@@ -33,6 +35,7 @@ func main() {
 
 	builder.BuildUserService(con, bcrypt, v1)
 	builder.BuildReactPostService(con, v1)
+	builder.BuildReactStoryService(con, v1)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
