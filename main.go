@@ -35,6 +35,7 @@ func main() {
 
 	builder.BuildUserService(con, bcrypt, v1)
 	builder.BuildReactPostService(con, v1)
+	builder.BuildProfileService(con, v1)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

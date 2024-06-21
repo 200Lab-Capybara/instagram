@@ -10,7 +10,7 @@ import (
 func (m *mySQLStorage) InsertProfile(ctx context.Context, profile *model.Profile) (*uuid.UUID, error) {
 
 	db := m.db.GetConnection()
-	if err := db.Create(profile).Error; err != nil {
+	if err := db.Table(profile.TableName()).Create(profile).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 	return &profile.ID, nil

@@ -9,7 +9,7 @@ import (
 
 func (p *profileHandler) setupProfileHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 1.
+
 		var data model.ProfileCreation
 
 		if err := c.BindJSON(&data); err != nil {
