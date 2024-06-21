@@ -40,8 +40,16 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 		if err != nil {
 			return false, err
 		}
+		_, err = u.storyRepo.DecreaseReactCountById(ctx, storyId)
+		if err != nil {
+			return false, err
+		}
 	} else {
 		_, err = u.reactionStoryRepo.CreateNewReactionStory(ctx, storyId, userId)
+		if err != nil {
+			return false, err
+		}
+		_, err = u.storyRepo.IncreaseReactCountById(ctx, storyId)
 		if err != nil {
 			return false, err
 		}
@@ -61,4 +69,6 @@ type IReactionStoryRepository interface {
 }
 type getStoryRepository interface {
 	FindStoryById(ctx context.Context, sid uuid.UUID) (*model.Story, error)
+	IncreaseReactCountById(ctx context.Context, sid uuid.UUID) (bool, error)
+	DecreaseReactCountById(ctx context.Context, sid uuid.UUID) (bool, error)
 }

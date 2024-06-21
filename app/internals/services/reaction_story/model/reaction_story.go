@@ -7,10 +7,8 @@ import (
 )
 
 var (
-	UserNotFound    = errors.New("user not found")
-	StoryNotFound   = errors.New("story not found")
-	LikeDuplicate   = errors.New("like already exists")
-	UnlikeDuplicate = errors.New("unlike already exists")
+	UserNotFound  = errors.New("user not found")
+	StoryNotFound = errors.New("story not found")
 )
 
 type ReactionStory struct {
