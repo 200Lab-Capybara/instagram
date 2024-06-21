@@ -25,7 +25,7 @@ var (
 
 func main() {
 	r := gin.Default()
-
+	r.Use(middleware.HandleError())
 	v1 := r.Group("/v1")
 	// Connect to database
 	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
@@ -44,6 +44,7 @@ func main() {
 	builder.BuildUserService(con, bcrypt, accessTokenProvider, v1, authMiddleware)
 	builder.BuildReactPostService(con, v1)
 	builder.BuildPostService(con, v1, authMiddleware)
+	builder.BuildReactStoryService(con, v1)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
