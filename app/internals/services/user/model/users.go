@@ -16,6 +16,8 @@ var (
 	UserLastNameIsRequired  = errors.New("last name is required")
 	UserPasswordIsRequired  = errors.New("password is required")
 	UserPasswordLength      = errors.New("password must be at least 8 characters long")
+	ErrorInvalidEmailOrPass = errors.New("invalid email or password")
+	ErrorUserBanded         = errors.New("user is baned")
 )
 
 type User struct {

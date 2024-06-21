@@ -13,20 +13,18 @@ func (hdl *reactionPostHandler) ReactPostHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := common.User1UUID
 		postId, err := uuid.Parse(c.Param("id"))
-
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid post ID"})
 			return
 		}
 
-		_, err = hdl.uc.Execute(c.Request.Context(), userId, postId)
-
+		success, err := hdl.uc.Execute(c.Request.Context(), userId, postId)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			return
+		}
+		if !success {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Failed to react to the post"})
 			return
 		}
 
