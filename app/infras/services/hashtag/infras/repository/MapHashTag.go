@@ -16,6 +16,5 @@ func (m *mySQLStorage) MapHashTag(ctx context.Context, postID uuid.UUID, hashtag
 	if err := db.Table(hashtagmodel.HashtagPost{}.TableName()).Create(&newHashTagPost).Error; err != nil {
 		return false, err
 	}
-
 	return true, nil
 }

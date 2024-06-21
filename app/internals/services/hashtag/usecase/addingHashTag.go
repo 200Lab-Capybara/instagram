@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	hashtagmodel "instagram/app/internals/services/hashtag/model"
+	"time"
 )
 
 type addingHashTagUseCase struct {
@@ -21,19 +22,20 @@ type AddingHashTagUseCase interface {
 }
 
 type AddingHashTagRepository interface {
-	FormatHashTag(ctx context.Context, hashtag []string) ([]*hashtagmodel.Hashtag, error)
-	MapHashTag(ctx context.Context, hashtag *hashtagmodel.HashtagPost) (bool, error)
+	MapHashTag(ctx context.Context, postID uuid.UUID, hashtag hashtagmodel.Hashtag) (bool, error)
 }
 
 func (u *addingHashTagUseCase) Execute(ctx context.Context, postId uuid.UUID, hashtags []string) (bool, error) {
 
-	validNullHashtags, err := u.addingHashTagRepository.FormatHashTag(ctx, hashtags)
+	hashtagFormat := hashtagmodel.Hashtag{}
+	validNullHashtags, err := hashtagFormat.HashTagFormat(ctx, hashtags)
+
 	if err != nil {
 		return false, err
 	}
 
 	for _, hashtag := range validNullHashtags {
-		_, err := u.addingHashTagRepository.MapHashTag(ctx, &hashtagmodel.HashtagPost{Hashtag_ID: hashtag.ID, Post_ID: postId, CreatedAt: hashtag.CreatedAt})
+		_, err := u.addingHashTagRepository.MapHashTag(ctx, postId, hashtagmodel.Hashtag{ID: hashtag.ID, Hashtag: hashtag.Hashtag, CreatedAt: time.Now().UTC()})
 		if err != nil {
 			return false, err
 		}
