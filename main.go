@@ -5,9 +5,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	usermysql "instagram/app/infras/services/user/repository/mysql"
 	"instagram/builder"
 	"instagram/common"
 	"instagram/components/hasher"
+	"instagram/components/tokenprovider"
 	"instagram/middleware"
 	"log"
 	"net/http"
@@ -33,9 +35,17 @@ func main() {
 	bcrypt := hasher.NewBcryptHasher()
 	con := common.NewSQLDatabase(db)
 
-	builder.BuildUserService(con, bcrypt, v1)
+	accessTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("ACCESS_SECRET"))
+	//refreshTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("REFRESH_SECRET"))
+
+	userStorage := usermysql.NewMySQLStorage(con)
+	authMiddleware := middleware.RequiredAuth(userStorage, accessTokenProvider)
+
+	builder.BuildUserService(con, bcrypt, accessTokenProvider, v1, authMiddleware)
 	builder.BuildReactPostService(con, v1)
 	builder.BuildProfileService(con, v1)
+	builder.BuildReactStoryService(con, v1)
+
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -43,6 +53,7 @@ func main() {
 		})
 	})
 
+	r.Use(middleware.HandleError())
 	err = r.Run(httpAddr)
 	if err != nil {
 		log.Fatal(err)

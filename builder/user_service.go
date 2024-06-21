@@ -7,11 +7,16 @@ import (
 	userusecase "instagram/app/internals/services/user/usecase"
 	"instagram/common"
 	"instagram/components/hasher"
+	"instagram/components/tokenprovider"
 )
 
-func BuildUserService(con common.SQLDatabase, hasher hasher.Hasher, v1 *gin.RouterGroup) {
+func BuildUserService(con common.SQLDatabase, hasher hasher.Hasher, accessPro tokenprovider.Provider, v1 *gin.RouterGroup, middleware gin.HandlerFunc) {
 	userStorage := usermysql.NewMySQLStorage(con)
+
+	// Usecase
 	registerUseCase := userusecase.NewRegisterUseCase(userStorage, hasher)
-	userHandler := userhttp.NewUserHandler(registerUseCase)
-	userHandler.RegisterV1Router(v1)
+	loginUC := userusecase.NewLoginUseCase(userStorage, hasher, accessPro)
+
+	userHandler := userhttp.NewUserHandler(registerUseCase, loginUC)
+	userHandler.RegisterV1Router(v1, middleware)
 }

@@ -9,17 +9,20 @@ import (
 type UserStatus int
 
 const (
-	Active UserStatus = iota + 1
-	Inactive
-	Banned
+	UserActive UserStatus = iota + 1
+	UserInactive
+	UserBanned
+	UserDeleted
 )
 
 func (status UserStatus) String() string {
 	switch status {
-	case Banned:
+	case UserBanned:
 		return "banned"
-	case Inactive:
+	case UserInactive:
 		return "inactive"
+	case UserDeleted:
+		return "deleted"
 	default:
 		return "active"
 	}
@@ -36,11 +39,11 @@ func (status *UserStatus) Scan(value interface{}) error {
 	statusValue := string(bytes)
 
 	if statusValue == "active" {
-		r = Active
+		r = UserActive
 	} else if statusValue == "inactive" {
-		r = Inactive
+		r = UserInactive
 	} else if statusValue == "banned" {
-		r = Banned
+		r = UserBanned
 	}
 
 	*status = r

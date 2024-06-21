@@ -3,6 +3,7 @@ package userusecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	usermodel "instagram/app/internals/services/user/model"
 	"instagram/common"
@@ -45,6 +46,7 @@ func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreat
 	salt, _ := u.hasher.GenSalt(16)
 
 	hashedPassword, err := u.hasher.Hash(user.Password, salt)
+	fmt.Println(user.Password, "user.Password")
 	if err != nil {
 		return nil, common.ErrInvalidRequest(err)
 	}
@@ -55,7 +57,7 @@ func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreat
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Role:      common.RoleUser,
-		Status:    common.Active,
+		Status:    common.UserActive,
 		Password:  hashedPassword,
 		Salt:      salt,
 	}
