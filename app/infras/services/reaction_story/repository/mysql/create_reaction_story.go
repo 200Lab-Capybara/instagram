@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"instagram/app/internals/services/reaction_story/model"
+	"instagram/common"
 	"time"
 )
 
@@ -17,7 +18,7 @@ func (m *mySQLStorage) CreateNewReactionStory(ctx context.Context, sid uuid.UUID
 	}
 	if err := db.Table(model.ReactionStory{}.TableName()).
 		Create(newRow).Error; err != nil {
-		return false, err
+		return false, common.ErrDB(err)
 	}
 	return true, nil
 }

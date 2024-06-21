@@ -14,5 +14,5 @@ func NewReactionStoryHandler(uc reactionstoryusecase.InsertReactionStoryUserCase
 }
 
 func (hdl *reactionStoryHandler) RegisterV1Router(r *gin.RouterGroup) {
-	r.POST("/story/:id/like", hdl.ReactStoryHandler())
+	r.POST("/story/:id/reaction", hdl.ReactStoryHandler())
 }

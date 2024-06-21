@@ -6,10 +6,11 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"instagram/app/internals/services/reaction_story/model"
+	"instagram/common"
 	"time"
 )
 
-func (m *mySQLStorage) HasBeenReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (*model.ReactionStory, error) {
+func (m *mySQLStorage) HasBeenReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error) {
 	db := m.db.GetConnection()
 	newRow := &model.ReactionStory{
 		UserId:     uid,
@@ -20,9 +21,9 @@ func (m *mySQLStorage) HasBeenReactionStory(ctx context.Context, sid uuid.UUID, 
 	err := db.Table(model.ReactionStory{}.TableName()).Where("user_id = ? AND story_id = ?", uid, sid).First(newRow).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
+			return false, model.ErrRecordReactStoryNotFound
 		}
-		return nil, err
+		return false, common.ErrDB(err)
 	}
-	return newRow, nil
+	return true, nil
 }

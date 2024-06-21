@@ -2,7 +2,6 @@ package reactionstoryusecase
 
 import (
 	"context"
-	"errors"
 	"github.com/google/uuid"
 	"instagram/app/internals/services/reaction_story/model"
 )
@@ -20,23 +19,17 @@ func NewInsertReactionStoryUserCase(reactRepo IReactionStoryRepository, storyRep
 }
 
 func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId uuid.UUID) (bool, error) {
-	existStory, err := u.storyRepo.FindStoryById(ctx, storyId)
+	_, err := u.storyRepo.FindStoryById(ctx, storyId)
 	if err != nil {
-		if !errors.Is(err, model.StoryNotFound) {
-			return false, model.StoryNotFound
-		}
 		return false, err
-	}
-	if existStory == nil {
-		return false, model.StoryNotFound
 	}
 
 	existReactStory, err := u.reactionStoryRepo.HasBeenReactionStory(ctx, storyId, userId)
 	if err != nil {
 		return false, err
 	}
-	if existReactStory != nil {
-		_, err = u.reactionStoryRepo.DelReactionStory(ctx, storyId, userId)
+	if existReactStory {
+		_, err = u.reactionStoryRepo.RemoveReactionStory(ctx, storyId, userId)
 		if err != nil {
 			return false, err
 		}
@@ -64,8 +57,8 @@ type InsertReactionStoryUserCase interface {
 
 type IReactionStoryRepository interface {
 	CreateNewReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
-	HasBeenReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (*model.ReactionStory, error)
-	DelReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
+	HasBeenReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
+	RemoveReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
 }
 type getStoryRepository interface {
 	FindStoryById(ctx context.Context, sid uuid.UUID) (*model.Story, error)

@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	UserNotFound  = errors.New("user not found")
-	StoryNotFound = errors.New("story not found")
+	ErrUserNotFound             = errors.New("user not found")
+	ErrStoryNotFound            = errors.New("story not found")
+	ErrRecordReactStoryNotFound = errors.New("record react story not found")
 )
 
 type ReactionStory struct {
@@ -18,8 +19,12 @@ type ReactionStory struct {
 	Updated_At *time.Time `json:"update_at"`
 }
 
-func (ReactionStory) TableName() string { return "react_story" }
+func (ReactionStory) TableName() string { return "react_stories" }
 
 type Story struct {
 	Id uuid.UUID `json:"id"`
+}
+
+func (Story) TableName() string {
+	return "stories"
 }
