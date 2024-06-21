@@ -1,8 +1,9 @@
 package userhttp
 
 import (
-	"github.com/gin-gonic/gin"
 	userusecase "instagram/app/internals/services/user/usecase"
+
+	"github.com/gin-gonic/gin"
 )
 
 type userHandler struct {
