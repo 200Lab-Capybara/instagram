@@ -17,13 +17,15 @@ func BuildPostService(con common.SQLDatabase, v1 *gin.RouterGroup, pubsubCon *na
 	createPostImages := postrpcclient.NewCreatePostImages(con)
 	pubsub := natspubsub.NewNatsProvider(pubsubCon)
 	createPostUseCase := postusecase.NewCreatePostUseCase(postStorage, createPostImages, pubsub)
+	increaseLikeCountUC := postusecase.NewIncreaseLikeCountUseCase(postStorage)
+	decreaseLikeCountUC := postusecase.NewDecreaseLikeCountUseCase(postStorage)
 
 	// HTTP Handler
 	postHandler := postshttp.NewPostHandler(createPostUseCase)
 	postHandler.RegisterV1Router(v1, middleware)
 
 	// Post Subscriber
-	postSubscriber := postsubscriber.NewPostSubscriber(pubsub)
+	postSubscriber := postsubscriber.NewPostSubscriber(pubsub, increaseLikeCountUC, decreaseLikeCountUC)
 	postSubscriber.Init()
 
 }
