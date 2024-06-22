@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/nats-io/nats.go"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	usermysql "instagram/app/infras/services/user/repository/mysql"
@@ -21,6 +22,8 @@ var (
 	//":8001"
 	connectionString = os.Getenv("CONNECTION_STRING")
 	//"capybara:my_secret@tcp(localhost:3306)/users?parseTime=true"
+	natsConnectionString = os.Getenv("NATS_CONNECTION_STRING")
+	//	nats://localhost:4222
 )
 
 func main() {
@@ -35,6 +38,12 @@ func main() {
 	bcrypt := hasher.NewBcryptHasher()
 	con := common.NewSQLDatabase(db)
 
+	natsCon, err := nats.Connect(natsConnectionString)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	accessTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("ACCESS_SECRET"))
 	//refreshTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("REFRESH_SECRET"))
 
@@ -43,9 +52,10 @@ func main() {
 
 	builder.BuildUserService(con, bcrypt, accessTokenProvider, v1, authMiddleware)
 	builder.BuildReactPostService(con, v1)
+	builder.BuildPostService(con, v1, natsCon, authMiddleware)
 	builder.BuildReactStoryService(con, v1)
 
-	r.GET("/ping", func(c *gin.Context) {
+	v1.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
