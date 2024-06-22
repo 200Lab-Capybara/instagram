@@ -5,18 +5,21 @@ import (
 	"github.com/google/uuid"
 	postsmodel "instagram/app/internals/services/posts/model"
 	"instagram/common"
+	"instagram/components/pubsub"
 	"time"
 )
 
 type createPostUseCase struct {
 	postRepository CreatePostRepository
 	pImagesRepo    CreatePostImagesRepository
+	pubsub         pubsub.MessageBroker
 }
 
-func NewCreatePostUseCase(postRepository CreatePostRepository, pImagesRepo CreatePostImagesRepository) CreatePostUseCase {
+func NewCreatePostUseCase(postRepository CreatePostRepository, pImagesRepo CreatePostImagesRepository, pubsub pubsub.MessageBroker) CreatePostUseCase {
 	return &createPostUseCase{
 		postRepository: postRepository,
 		pImagesRepo:    pImagesRepo,
+		pubsub:         pubsub,
 	}
 }
 
@@ -32,7 +35,7 @@ type CreatePostUseCase interface {
 	Execute(ctx context.Context, requester common.Requester, dto *postsmodel.PostCreation) (*uuid.UUID, error)
 }
 
-func (c createPostUseCase) Execute(ctx context.Context, requester common.Requester, dto *postsmodel.PostCreation) (*uuid.UUID, error) {
+func (c *createPostUseCase) Execute(ctx context.Context, requester common.Requester, dto *postsmodel.PostCreation) (*uuid.UUID, error) {
 	postID, _ := uuid.NewV7()
 	userID := requester.UserId()
 
@@ -58,10 +61,19 @@ func (c createPostUseCase) Execute(ctx context.Context, requester common.Request
 
 	id, err := c.postRepository.CreatePost(ctx, post)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
-	// TODO: Publish event
+	postMessage := pubsub.NewAppMessage(&userID, common.CreatedPostTopic, map[string]interface{}{
+		"post_id": postID,
+		"user_id": userID,
+	})
+
+	// TODO: Publish CreatedPostTopic event
+	err = c.pubsub.Publish(ctx, postMessage)
+	if err != nil {
+		return nil, err
+	}
 
 	return id, nil
 }
