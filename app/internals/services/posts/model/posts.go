@@ -10,6 +10,10 @@ import (
 
 type PostStatus int
 
+var (
+	ErrorPostNotFound = errors.New("post not found")
+)
+
 const (
 	PostActive PostStatus = iota + 1
 	PostDeleted
