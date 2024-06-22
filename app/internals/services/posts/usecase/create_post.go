@@ -2,6 +2,7 @@ package postusecase
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	postsmodel "instagram/app/internals/services/posts/model"
 	"instagram/common"
@@ -38,6 +39,12 @@ type CreatePostUseCase interface {
 func (c *createPostUseCase) Execute(ctx context.Context, requester common.Requester, dto *postsmodel.PostCreation) (*uuid.UUID, error) {
 	postID, _ := uuid.NewV7()
 	userID := requester.UserId()
+	usedHashtag := false
+
+	hashtags := common.GetHashtag(dto.Content)
+	if len(hashtags) > 0 {
+		usedHashtag = true
+	}
 
 	if len(dto.Images) > 0 {
 		// Create post images
@@ -54,7 +61,7 @@ func (c *createPostUseCase) Execute(ctx context.Context, requester common.Reques
 		LikeCount:    0,
 		CommentCount: 0,
 		Status:       postsmodel.PostActive,
-		UsedHashtag:  false,
+		UsedHashtag:  usedHashtag,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
@@ -64,16 +71,26 @@ func (c *createPostUseCase) Execute(ctx context.Context, requester common.Reques
 		return nil, err
 	}
 
-	postMessage := pubsub.NewAppMessage(&userID, common.CreatedPostTopic, map[string]interface{}{
-		"post_id": postID,
-		"user_id": userID,
-	})
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("Error public message from topic %s", common.CreatedPostTopic)
+			}
+		}()
 
-	// TODO: Publish CreatedPostTopic event
-	err = c.pubsub.Publish(ctx, postMessage)
-	if err != nil {
-		return nil, err
-	}
+		postMessage := pubsub.NewAppMessage(&userID, common.CreatedPostTopic, map[string]interface{}{
+			"post_id":  postID,
+			"user_id":  userID,
+			"hashtags": hashtags,
+			"images":   dto.Images,
+		})
+
+		// TODO: Publish CreatedPostTopic event
+		err := c.pubsub.Publish(ctx, postMessage)
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	return id, nil
 }

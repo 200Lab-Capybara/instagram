@@ -16,6 +16,5 @@ func NewPostHandler(postUC postusecase.CreatePostUseCase) *postHandler {
 }
 
 func (hdl *postHandler) RegisterV1Router(v1 *gin.RouterGroup, middleware gin.HandlerFunc) {
-	v1.Use(middleware)
-	v1.POST("/posts", hdl.CreatePostHandler())
+	v1.POST("/posts", middleware, hdl.CreatePostHandler())
 }

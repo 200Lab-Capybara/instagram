@@ -1,6 +1,8 @@
 package postsmodel
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type PostCreation struct {
 	Images  []uuid.UUID `json:"images"`

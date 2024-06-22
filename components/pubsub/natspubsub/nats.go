@@ -25,6 +25,7 @@ func (n *natsProvider) Publish(ctx context.Context, msg *pubsub.Message) error {
 	}
 
 	err = n.con.Publish(msg.Topic, bytes)
+
 	if err != nil {
 		return err
 	}
