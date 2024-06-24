@@ -1,8 +1,14 @@
-package model
+package reactionpostmodel
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	"time"
+)
+
+var (
+	ErrRecordReactPostNotFound = errors.New("record react story not found")
+	ErrPostDoNotExists         = errors.New("post do not exists")
 )
 
 type ReactionPost struct {
