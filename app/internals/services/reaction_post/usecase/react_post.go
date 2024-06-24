@@ -38,7 +38,6 @@ func (uc *reactionPostUseCase) Execute(ctx context.Context, requester common.Req
 
 	checkExist, err := uc.reactionPostRepository.CheckExistReactionPost(ctx, userId, postId)
 
-	fmt.Println(checkExist, "checkExist")
 	if checkExist {
 		_, err = uc.reactionPostRepository.RemoveRecordReactionPost(ctx, postId, userId)
 		reactType = common.ReactedPostUnlike
@@ -53,8 +52,6 @@ func (uc *reactionPostUseCase) Execute(ctx context.Context, requester common.Req
 			return false, err
 		}
 	}
-
-	fmt.Println(checkExist)
 
 	go func() {
 		defer func() {
