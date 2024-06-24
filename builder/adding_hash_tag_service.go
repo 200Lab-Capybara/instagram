@@ -8,7 +8,7 @@ import (
 	"instagram/common"
 )
 
-func BuildAddingHashTagService(con common.SQLDatabase, v1 *gin.RouterGroup) {
+func BuildHashTagService(con common.SQLDatabase, v1 *gin.RouterGroup) {
 	hashtagRepo := hashtagsql.NewMySQLStorage(con)
 	hashtagUC := hashtagusercase.NewCreateHashTagUseCase(hashtagRepo)
 	hashtagHandler := hashtaghttp.NewHashTagHandler(hashtagUC)
