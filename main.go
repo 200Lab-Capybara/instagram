@@ -51,7 +51,7 @@ func main() {
 	authMiddleware := middleware.RequiredAuth(userStorage, accessTokenProvider)
 
 	builder.BuildUserService(con, bcrypt, accessTokenProvider, v1, authMiddleware)
-	builder.BuildReactPostService(con, v1)
+	builder.BuildReactPostService(con, natsCon, v1, authMiddleware)
 	builder.BuildPostService(con, v1, natsCon, authMiddleware)
 	builder.BuildReactStoryService(con, v1)
 
