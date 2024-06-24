@@ -11,7 +11,7 @@ import (
 type PostStatus int
 
 var (
-	ErrorPostNotFound = errors.New("post not found")
+	ErrPostNotFound = errors.New("post not found")
 )
 
 const (

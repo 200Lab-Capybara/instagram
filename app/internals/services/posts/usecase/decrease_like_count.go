@@ -30,14 +30,14 @@ type DecreaseLikeCountUseCase interface {
 func (i *decreaseLikeCountUseCase) Execute(ctx context.Context, postID uuid.UUID) (bool, error) {
 	post, err := i.postRepository.GetByID(ctx, postID)
 	if err != nil {
-		if errors.Is(err, postsmodel.ErrorPostNotFound) {
-			return false, postsmodel.ErrorPostNotFound
+		if errors.Is(err, postsmodel.ErrPostNotFound) {
+			return false, postsmodel.ErrPostNotFound
 		}
 		return false, common.ErrInvalidRequest(err)
 	}
 
 	if post == nil {
-		return false, postsmodel.ErrorPostNotFound
+		return false, postsmodel.ErrPostNotFound
 	}
 
 	if post.LikeCount == 0 {

@@ -9,16 +9,16 @@ type UserLogin struct {
 
 func (u *UserLogin) Validate() error {
 	if u.Email == "" {
-		return UserEmailIsRequired
+		return ErrUserEmailIsRequired
 	}
 
 	_, err := mail.ParseAddress(u.Email)
 	if err != nil {
-		return UserEmailInvalid
+		return ErrUserEmailInvalid
 	}
 
 	if u.Password == "" {
-		return UserPasswordIsRequired
+		return ErrUserPasswordIsRequired
 	}
 
 	return nil

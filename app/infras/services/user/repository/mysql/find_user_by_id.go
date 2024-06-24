@@ -15,7 +15,7 @@ func (s *mySQLStorage) FindUserById(ctx context.Context, id uuid.UUID) (*usermod
 
 	if err := db.Where("id = ?", id).First(&data).Error; err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
-			return nil, usermodel.UserNotFound
+			return nil, usermodel.ErrUserNotFound
 		} else {
 			return nil, common.ErrDB(err)
 		}

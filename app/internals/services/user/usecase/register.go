@@ -32,12 +32,12 @@ type RegisterRepository interface {
 
 func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreation) (*uuid.UUID, error) {
 	exists, err := u.registerRepository.FindUserByEmail(ctx, user.Email)
-	if err != nil && !errors.Is(err, usermodel.UserNotFound) {
+	if err != nil && !errors.Is(err, usermodel.ErrUserNotFound) {
 		return nil, err
 	}
 
 	if exists != nil {
-		return nil, common.NewCustomError(usermodel.UserAlreadyExists, usermodel.UserAlreadyExists.Error(), "user_already_exists")
+		return nil, common.NewCustomError(usermodel.ErrUserAlreadyExists, usermodel.ErrUserAlreadyExists.Error(), "user_already_exists")
 	}
 
 	id, _ := uuid.NewV7()
