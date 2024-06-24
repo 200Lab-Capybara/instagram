@@ -7,7 +7,6 @@ import (
 )
 
 var (
-	ErrUserNotFound             = errors.New("user not found")
 	ErrStoryNotFound            = errors.New("story not found")
 	ErrRecordReactStoryNotFound = errors.New("record react story not found")
 )

@@ -35,33 +35,35 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 		if err != nil {
 			return false, err
 		}
-		_, err = u.storyRepo.DecreaseReactCountById(ctx, storyId)
-		if err != nil {
-			return false, err
-		}
+		//_, err = u.storyRepo.DecreaseReactCountById(ctx, storyId)
+		//if err != nil {
+		//	return false, err
+		//}
+		reactType = common.ReactedPostUnlike
 	} else {
 		_, err = u.reactionStoryRepo.CreateNewReactionStory(ctx, storyId, userId)
 		if err != nil {
 			return false, err
 		}
-		_, err = u.storyRepo.IncreaseReactCountById(ctx, storyId)
-		if err != nil {
-			return false, err
-		}
+		//_, err = u.storyRepo.IncreaseReactCountById(ctx, storyId)
+		//if err != nil {
+		//	return false, err
+		//}
 	}
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				fmt.Printf("Error public message from topic %s", common.ReactedStoryLike)
+				fmt.Printf("Error public message from topic %s", common.ReactedStoryTopic)
 			}
 		}()
-		storyMessage := pubsub.NewAppMessage(&userId, common.CreatedStoryTopic, map[string]interface{}{
-			"story_id":   storyId,
+
+		postMessage := pubsub.NewAppMessage(&userId, common.ReactedPostTopic, map[string]interface{}{
+			"post_id":    storyId,
 			"react_type": reactType,
 		})
 
 		// TODO: Publish CreatedPostTopic event
-		err := u.pubsub.Publish(ctx, storyMessage)
+		err := u.pubsub.Publish(ctx, postMessage)
 		if err != nil {
 			panic(err)
 		}
