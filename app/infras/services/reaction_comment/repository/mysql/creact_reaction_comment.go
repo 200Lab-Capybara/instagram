@@ -14,6 +14,7 @@ func (m *mySQLStorage) CreateNewReactionComment(ctx context.Context, commentId u
 		UserId:    userId,
 		CommentId: commentId,
 		CreatedAt: time.Now().UTC(),
+		UpdatedAt: nil,
 	}
 	if err := db.Table(modelreactioncomment.ReactionComment{}.TableName()).
 		Create(newRow).Error; err != nil {
