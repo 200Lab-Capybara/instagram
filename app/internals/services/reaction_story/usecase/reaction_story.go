@@ -11,7 +11,7 @@ type reactionStoryUC struct {
 	storyRepo         getStoryRepository
 }
 
-func NewInsertReactionStoryUserCase(reactRepo IReactionStoryRepository, storyRepo getStoryRepository) InsertReactionStoryUserCase {
+func NewInsertReactionStoryUseCase(reactRepo IReactionStoryRepository, storyRepo getStoryRepository) InsertReactionStoryUseCase {
 	return &reactionStoryUC{
 		reactRepo,
 		storyRepo,
@@ -25,10 +25,7 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 	}
 
 	existReactStory, err := u.reactionStoryRepo.HasBeenReactionStory(ctx, storyId, userId)
-	if err != nil {
-		return false, err
-	}
-	if existReactStory {
+	if existReactStory && err == nil {
 		_, err = u.reactionStoryRepo.RemoveReactionStory(ctx, storyId, userId)
 		if err != nil {
 			return false, err
@@ -51,7 +48,7 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 	return true, nil
 }
 
-type InsertReactionStoryUserCase interface {
+type InsertReactionStoryUseCase interface {
 	Execute(ctx context.Context, storyId uuid.UUID, userId uuid.UUID) (bool, error)
 }
 

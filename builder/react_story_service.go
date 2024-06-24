@@ -13,7 +13,7 @@ func BuildReactStoryService(con common.SQLDatabase, v1 *gin.RouterGroup) {
 
 	reactionRepo := reactstorymysql.NewMySQLStorage(con)
 	getStoryRepo := rpc_client.NewGetStoryRepo(con)
-	getReactionStory := reactionstoryusecase.NewInsertReactionStoryUserCase(reactionRepo, getStoryRepo)
+	getReactionStory := reactionstoryusecase.NewInsertReactionStoryUseCase(reactionRepo, getStoryRepo)
 	reactionStoryHandler := reactionstoryhttp.NewReactionStoryHandler(getReactionStory)
 	reactionStoryHandler.RegisterV1Router(v1)
 }
