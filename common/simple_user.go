@@ -8,7 +8,8 @@ type SimpleUser struct {
 	UserId    uuid.UUID `json:"user_id"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
-	Role      string    `json:"role"`
+	Role      string    `json:"-"`
+	Status    string    `json:"-"`
 }
 
 type Requester interface {
@@ -16,7 +17,6 @@ type Requester interface {
 	FirstName() string
 	LastName() string
 	Role() string
-	Status() string
 	GetSimpleUser() *SimpleUser
 }
 

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"instagram/common"
 )
@@ -18,7 +19,7 @@ func HandleError() gin.HandlerFunc {
 				}
 
 				appErr := common.ErrInternal(err.(error))
-				c.AbortWithStatusJSON(appErr.StatusCode, appErr)
+				c.AbortWithStatusJSON(appErr.StatusCode, errors.New("internal server error"))
 				panic(err)
 				return
 			}
