@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
-	usermodel "github.com/nghiatrann0502/instagram-clone/app/internals/services/user/model"
-	"github.com/nghiatrann0502/instagram-clone/common"
-	"github.com/nghiatrann0502/instagram-clone/components/hasher"
+	usermodel "instagram/app/internals/services/user/model"
+	"instagram/common"
+	"instagram/components/hasher"
 )
 
 type registerUseCase struct {
@@ -32,27 +32,22 @@ type RegisterRepository interface {
 
 func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreation) (*uuid.UUID, error) {
 	exists, err := u.registerRepository.FindUserByEmail(ctx, user.Email)
-	if err != nil && !errors.Is(err, usermodel.UserNotFound) {
+	if err != nil && !errors.Is(err, usermodel.ErrUserNotFound) {
 		return nil, err
 	}
 
 	if exists != nil {
-		return nil, usermodel.UserAlreadyExists
+		return nil, common.NewCustomError(usermodel.ErrUserAlreadyExists, usermodel.ErrUserAlreadyExists.Error(), "user_already_exists")
 	}
 
-	id, err := uuid.NewV7()
-	if err != nil {
-		return nil, err
-	}
+	id, _ := uuid.NewV7()
 
-	salt, err := u.hasher.GenSalt(16)
-	if err != nil {
-		return nil, err
-	}
+	salt, _ := u.hasher.GenSalt(16)
 
 	hashedPassword, err := u.hasher.Hash(user.Password, salt)
+
 	if err != nil {
-		return nil, err
+		return nil, common.ErrInvalidRequest(err)
 	}
 
 	data := &usermodel.User{
@@ -61,7 +56,7 @@ func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreat
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Role:      common.RoleUser,
-		Status:    common.Active,
+		Status:    common.UserActive,
 		Password:  hashedPassword,
 		Salt:      salt,
 	}

@@ -13,28 +13,28 @@ type UserCreation struct {
 
 func (u *UserCreation) Validate() error {
 	if u.Email == "" {
-		return UserEmailIsRequired
+		return ErrUserEmailIsRequired
 	}
 
 	_, err := mail.ParseAddress(u.Email)
 	if err != nil {
-		return UserEmailInvalid
+		return ErrUserEmailInvalid
 	}
 
 	if u.FirstName == "" {
-		return UserFirstNameIsRequired
+		return ErrUserFirstNameIsRequired
 	}
 
 	if u.LastName == "" {
-		return UserLastNameIsRequired
+		return ErrUserLastNameIsRequired
 	}
 
 	if u.Password == "" {
-		return UserPasswordIsRequired
+		return ErrUserPasswordIsRequired
 	}
 
 	if len(u.Password) < 8 {
-		return UserPasswordLength
+		return ErrUserPasswordLength
 	}
 
 	return nil
