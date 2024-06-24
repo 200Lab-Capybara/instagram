@@ -13,6 +13,7 @@ func (hdl *reactionPostHandler) ReactPostHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := common.User1UUID
 		postId, err := uuid.Parse(c.Param("id"))
+
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid post ID"})
 			return
