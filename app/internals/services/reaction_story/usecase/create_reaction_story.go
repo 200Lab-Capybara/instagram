@@ -2,19 +2,24 @@ package reactionstoryusecase
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"instagram/app/internals/services/reaction_story/model"
+	"instagram/common"
+	"instagram/components/pubsub"
 )
 
 type reactionStoryUC struct {
 	reactionStoryRepo IReactionStoryRepository
 	storyRepo         getStoryRepository
+	pubsub            pubsub.MessageBroker
 }
 
-func NewInsertReactionStoryUseCase(reactRepo IReactionStoryRepository, storyRepo getStoryRepository) InsertReactionStoryUseCase {
+func NewInsertReactionStoryUseCase(reactRepo IReactionStoryRepository, storyRepo getStoryRepository, pubsub pubsub.MessageBroker) InsertReactionStoryUseCase {
 	return &reactionStoryUC{
 		reactRepo,
 		storyRepo,
+		pubsub,
 	}
 }
 
@@ -23,7 +28,7 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 	if err != nil {
 		return false, err
 	}
-
+	reactType := common.ReactedStoryLike
 	existReactStory, err := u.reactionStoryRepo.HasBeenReactionStory(ctx, storyId, userId)
 	if existReactStory && err == nil {
 		_, err = u.reactionStoryRepo.RemoveReactionStory(ctx, storyId, userId)
@@ -44,7 +49,23 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 			return false, err
 		}
 	}
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("Error public message from topic %s", common.ReactedStoryLike)
+			}
+		}()
+		storyMessage := pubsub.NewAppMessage(&userId, common.CreatedStoryTopic, map[string]interface{}{
+			"story_id":   storyId,
+			"react_type": reactType,
+		})
 
+		// TODO: Publish CreatedPostTopic event
+		err := u.pubsub.Publish(ctx, storyMessage)
+		if err != nil {
+			panic(err)
+		}
+	}()
 	return true, nil
 }
 
