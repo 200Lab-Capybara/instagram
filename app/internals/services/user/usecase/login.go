@@ -35,20 +35,20 @@ func (l *loginUseCase) Execute(ctx context.Context, input *usermodel.UserLogin) 
 	user, err := l.loginRepo.FindUserByEmail(ctx, input.Email)
 
 	if err != nil {
-		if errors.Is(err, usermodel.UserNotFound) || user.Status == common.UserDeleted {
-			return nil, common.NewCustomError(usermodel.ErrorInvalidEmailOrPass, usermodel.ErrorInvalidEmailOrPass.Error(), "invalid_email_or_password")
+		if errors.Is(err, usermodel.ErrUserNotFound) || user.Status == common.UserDeleted {
+			return nil, common.NewCustomError(usermodel.ErrInvalidEmailOrPass, usermodel.ErrInvalidEmailOrPass.Error(), "invalid_email_or_password")
 		}
 
 		return nil, err
 	}
 
 	if user.Status == common.UserBanned {
-		return nil, common.NewCustomError(usermodel.ErrorUserBanded, usermodel.ErrorUserBanded.Error(), "user_banded")
+		return nil, common.NewCustomError(usermodel.ErrUserBanded, usermodel.ErrUserBanded.Error(), "user_banded")
 	}
 
 	// Compare the password
 	if !l.hasher.Verify(input.Password, user.Salt, user.Password) {
-		return nil, common.NewCustomError(usermodel.ErrorInvalidEmailOrPass, usermodel.ErrorInvalidEmailOrPass.Error(), "invalid_email_or_password")
+		return nil, common.NewCustomError(usermodel.ErrInvalidEmailOrPass, usermodel.ErrInvalidEmailOrPass.Error(), "invalid_email_or_password")
 	}
 
 	tokenPayload := common.TokenPayload{

@@ -3,7 +3,6 @@ package userusecase
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/google/uuid"
 	usermodel "instagram/app/internals/services/user/model"
 	"instagram/common"
@@ -33,12 +32,12 @@ type RegisterRepository interface {
 
 func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreation) (*uuid.UUID, error) {
 	exists, err := u.registerRepository.FindUserByEmail(ctx, user.Email)
-	if err != nil && !errors.Is(err, usermodel.UserNotFound) {
+	if err != nil && !errors.Is(err, usermodel.ErrUserNotFound) {
 		return nil, err
 	}
 
 	if exists != nil {
-		return nil, common.NewCustomError(usermodel.UserAlreadyExists, usermodel.UserAlreadyExists.Error(), "user_already_exists")
+		return nil, common.NewCustomError(usermodel.ErrUserAlreadyExists, usermodel.ErrUserAlreadyExists.Error(), "user_already_exists")
 	}
 
 	id, _ := uuid.NewV7()
@@ -46,7 +45,7 @@ func (u *registerUseCase) Execute(ctx context.Context, user *usermodel.UserCreat
 	salt, _ := u.hasher.GenSalt(16)
 
 	hashedPassword, err := u.hasher.Hash(user.Password, salt)
-	fmt.Println(user.Password, "user.Password")
+
 	if err != nil {
 		return nil, common.ErrInvalidRequest(err)
 	}

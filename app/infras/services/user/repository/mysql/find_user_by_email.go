@@ -13,7 +13,7 @@ func (m *mySQLStorage) FindUserByEmail(ctx context.Context, email string) (*user
 	db := m.db.GetConnection().Table(data.TableName())
 	if err := db.Where("email = ?", email).First(&data).Error; err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
-			return nil, usermodel.UserNotFound
+			return nil, usermodel.ErrUserNotFound
 		} else {
 			return nil, common.ErrDB(err)
 		}
