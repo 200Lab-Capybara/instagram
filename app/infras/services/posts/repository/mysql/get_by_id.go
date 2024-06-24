@@ -14,7 +14,7 @@ func (store *mysqlStorage) GetByID(ctx context.Context, postID uuid.UUID) (*post
 	err := store.db.GetConnection().WithContext(ctx).Where("id = ?", postID).First(&post).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, postsmodel.ErrorPostNotFound
+			return nil, postsmodel.ErrPostNotFound
 		}
 
 		return nil, common.ErrDB(err)
