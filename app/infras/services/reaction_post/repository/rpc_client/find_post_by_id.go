@@ -21,7 +21,7 @@ func (repo *getPostRepo) FindById(ctx context.Context, postId uuid.UUID) (*react
 	var post reactionpostmodel.Post
 	if err := repo.db.GetConnection().Table("posts").Where("id =?", postId).First(&post).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, reactionpostmodel.ErrPostDoNotExists
+			return nil, reactionpostmodel.ErrPostDoNotExist
 		}
 
 		return nil, common.ErrDB(err)

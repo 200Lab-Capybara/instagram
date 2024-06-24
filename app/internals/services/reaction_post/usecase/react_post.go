@@ -33,8 +33,9 @@ func (uc *reactionPostUseCase) Execute(ctx context.Context, requester common.Req
 	}
 
 	if post.Status == "deleted" {
-		//TODO
+		return false, common.ErrInvalidRequest(reactionpostmodel.ErrPostDoNotExist)
 	}
+
 	checkExist, err := uc.reactionPostRepository.CheckExistReactionPost(ctx, userId, postId)
 
 	fmt.Println(checkExist, "checkExist")

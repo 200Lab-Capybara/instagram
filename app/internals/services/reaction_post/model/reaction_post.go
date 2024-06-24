@@ -8,7 +8,7 @@ import (
 
 var (
 	ErrRecordReactPostNotFound = errors.New("record react story not found")
-	ErrPostDoNotExists         = errors.New("post do not exists")
+	ErrPostDoNotExist          = errors.New("post do not exist")
 )
 
 type ReactionPost struct {
