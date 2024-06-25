@@ -9,5 +9,7 @@ CREATE TABLE `stories`
     `updated_at`    datetime(6) DEFAULT NULL,
     `image_id`      varchar(36) NOT NULL,
     `is_active`     tinyint(1) NOT NULL DEFAULT '1',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `stories_user_id_idx` (`user_id`) USING BTREE,
+    UNIQUE KEY `stories_created_at_idx` (`created_at`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
