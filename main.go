@@ -24,7 +24,6 @@ var (
 	//"capybara:my_secret@tcp(localhost:3306)/users?parseTime=true"
 	natsConnectionString = os.Getenv("NATS_CONNECTION_STRING")
 	//	nats://localhost:4222
-
 )
 
 func main() {
@@ -40,6 +39,8 @@ func main() {
 	bcrypt := hasher.NewBcryptHasher()
 	con := common.NewSQLDatabase(db)
 
+	go builder.BuildRpcService(con)
+
 	natsCon, err := nats.Connect(natsConnectionString)
 
 	if err != nil {
@@ -52,19 +53,21 @@ func main() {
 	userStorage := usermysql.NewMySQLStorage(con)
 	authMiddleware := middleware.RequiredAuth(userStorage, accessTokenProvider)
 
-	builder.BuildUserService(con, bcrypt, accessTokenProvider, v1, authMiddleware)
+	builder.BuildUserService(con, natsCon, bcrypt, accessTokenProvider, v1, authMiddleware)
 	builder.BuildReactPostService(con, natsCon, v1, authMiddleware)
 	builder.BuildPostService(con, v1, natsCon, authMiddleware)
 	builder.BuildReactStoryService(con, v1)
 	builder.BuildProfileService(con, v1)
+	builder.BuildFollowService(con, v1, natsCon, authMiddleware)
+
+	// NOTE: This is a simple internal service route
+	// NOTE: internal/v1/...
 
 	v1.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
-
-	go builder.BuildRpcService(con)
 
 	r.Use(middleware.HandleError())
 	err = r.Run(httpAddr)
