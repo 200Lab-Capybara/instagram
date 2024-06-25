@@ -2,7 +2,6 @@ package postusecase
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/uuid"
 	postsmodel "instagram/app/internals/services/posts/model"
 	usermodel "instagram/app/internals/services/user/model"
@@ -40,10 +39,7 @@ func (g getListPostByUserIdUseCase) Execute(ctx context.Context, userId uuid.UUI
 		return nil, err
 	}
 
-	fmt.Println(simpleUser.Status, "status:::::")
-
 	if simpleUser.Status == common.UserDeleted.String() {
-		fmt.Println("user deleted")
 		return nil, common.NewCustomError(usermodel.ErrUserNotFound, usermodel.ErrUserNotFound.Error(), "user_deleted")
 	}
 

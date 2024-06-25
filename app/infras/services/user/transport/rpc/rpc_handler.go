@@ -2,7 +2,6 @@ package userrpc
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/uuid"
 	userusecase "instagram/app/internals/services/user/usecase"
 	pb "instagram/proto"
@@ -23,7 +22,7 @@ func (rpc *userRpcService) GetUserById(ctx context.Context, dto *pb.GetUserByIdR
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(user.Status, "role")
+
 	return &pb.PublicUserInfoResp{
 		User: &pb.PublicUserInfo{
 			Id:        user.ID.String(),

@@ -15,7 +15,7 @@ func (store *mysqlStorage) GetListPostByUserId(ctx context.Context, userId uuid.
 		return nil, err
 	}
 
-	if v := paging.FakeCursor; v != "" {
+	if v := paging.Cursor; v != "" {
 		db = db.Where("created_at < ?", v)
 	} else {
 		db = db.Offset((paging.Page - 1) * paging.Limit)

@@ -1,7 +1,6 @@
 package postshttp
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"instagram/common"
@@ -24,7 +23,6 @@ func (hdl *postHandler) GetListPostByUserIdHandler() gin.HandlerFunc {
 		}
 
 		data, err := hdl.getPostsByUserId.Execute(c.Request.Context(), postId, &paging)
-		fmt.Println(err, "err")
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
