@@ -7,12 +7,12 @@ import (
 	"instagram/common"
 )
 
-func (store *mySQLStorage) ListingUserLikePost(ctx context.Context, postId uuid.UUID) ([]reactionpostmodel.ReactionPost, error) {
+func (store *mySQLStorage) GetUserIdLikePost(ctx context.Context, postId uuid.UUID) ([]uuid.UUID, error) {
 	db := store.db.GetConnection()
-	var reactions []reactionpostmodel.ReactionPost
+	var userIds []uuid.UUID
 	if err := db.Table(reactionpostmodel.ReactionPost{}.TableName()).
-		Where("post_id = ?", postId).Find(&reactions).Error; err != nil {
+		Where("post_id = ?", postId).Pluck("user_id", &userIds).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
-	return reactions, nil
+	return userIds, nil
 }

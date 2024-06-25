@@ -4,18 +4,21 @@ import (
 	"context"
 	"github.com/google/uuid"
 	reactionpostmodel "instagram/app/internals/services/reaction_post/model"
+	usermodel "instagram/app/internals/services/user/model"
 	"instagram/common"
 )
 
 type getUserLikePostUseCase struct {
 	getUserLikePostRepo GetUserLikePostRepo
 	postRepository      GetPostRepository
+	getUserInfoRepo     GetUserInfoRepo
 }
 
-func GetUserLikePostUC(getUserLikePostRepo GetUserLikePostRepo, postRepository GetPostRepository) GetUserLikePostUseCase {
+func GetUserLikePostUC(getUserLikePostRepo GetUserLikePostRepo, postRepository GetPostRepository, getUserInfoRepo GetUserInfoRepo) GetUserLikePostUseCase {
 	return &getUserLikePostUseCase{
 		getUserLikePostRepo: getUserLikePostRepo,
 		postRepository:      postRepository,
+		getUserInfoRepo:     getUserInfoRepo,
 	}
 }
 
@@ -29,13 +32,24 @@ func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID)
 		return false, common.ErrInvalidRequest(reactionpostmodel.ErrPostDoNotExist)
 	}
 
-	listUser, err := uc.getUserLikePostRepo.ListingUserLikePost(ctx, postId)
+	listUser, err := uc.getUserLikePostRepo.GetUserIdLikePost(ctx, postId)
 
 	if err != nil {
 		return false, err
 	}
 
-	return listUser, nil
+	listInfo, err := uc.getUserInfoRepo.GetUserInfoById(ctx, listUser)
+
+	if err != nil {
+		return false, err
+	}
+
+	userMap := make(map[uuid.UUID]usermodel.User)
+	for _, userInfo := range listInfo {
+		userMap[userInfo.ID] = userInfo
+	}
+
+	return userMap, nil
 }
 
 type GetUserLikePostUseCase interface {
@@ -43,5 +57,9 @@ type GetUserLikePostUseCase interface {
 }
 
 type GetUserLikePostRepo interface {
-	ListingUserLikePost(ctx context.Context, postId uuid.UUID) ([]reactionpostmodel.ReactionPost, error)
+	GetUserIdLikePost(ctx context.Context, postId uuid.UUID) ([]uuid.UUID, error)
+}
+
+type GetUserInfoRepo interface {
+	GetUserInfoById(ctx context.Context, listUserId []uuid.UUID) ([]usermodel.User, error)
 }

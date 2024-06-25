@@ -14,9 +14,11 @@ import (
 func BuildReactPostService(con common.SQLDatabase, nat *nats.Conn, v1 *gin.RouterGroup, middleware gin.HandlerFunc) {
 	reactionRepo := reactionpostmysql.NewMySQLStorage(con)
 	getPostRepo := rpc_client.NewGetPostRepo(con)
+	getUserInfoRepo := rpc_client.NewGetUserInfoRepo(con)
+
 	ps := natspubsub.NewNatsProvider(nat)
 	reactionUC := reactionpostusecase.NewLikePostUseCase(reactionRepo, getPostRepo, ps)
-	getUserLikePostUC := reactionpostusecase.GetUserLikePostUC(reactionRepo, getPostRepo)
+	getUserLikePostUC := reactionpostusecase.GetUserLikePostUC(reactionRepo, getPostRepo, getUserInfoRepo)
 
 	reactionHDL := reactionposthttp.NewReactionPostHandler(reactionUC, getUserLikePostUC)
 	reactionHDL.RegisterV1Router(v1, middleware)
