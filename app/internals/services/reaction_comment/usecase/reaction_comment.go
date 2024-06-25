@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	modelreactioncomment "instagram/app/internals/services/reaction_comment/model"
 	"instagram/common"
+	"instagram/components/pubsub"
 )
 
 type IReactionCommentRepository interface {
@@ -23,16 +24,18 @@ type getCommentRepository interface {
 type reactionCommentUC struct {
 	reactionCommentRepo IReactionCommentRepository
 	commentRepo         getCommentRepository
+	pubsub              pubsub.MessageBroker
 }
 
 type InsertReactionCommentUseCase interface {
 	Execute(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error)
 }
 
-func NewInsertReactionCommentUseCase(reactRepo IReactionCommentRepository, commentRepo getCommentRepository) InsertReactionCommentUseCase {
+func NewInsertReactionCommentUseCase(reactRepo IReactionCommentRepository, commentRepo getCommentRepository, pubsub pubsub.MessageBroker) InsertReactionCommentUseCase {
 	return &reactionCommentUC{
 		reactRepo,
 		commentRepo,
+		pubsub,
 	}
 }
 
@@ -64,13 +67,19 @@ func (u *reactionCommentUC) Execute(ctx context.Context, commentId uuid.UUID, us
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				fmt.Printf("Error public message from topic %s\n", common.CreateCommentTopic)
+				fmt.Printf("Error public message from topic %s\n", common.ReactedCommentTopic)
 			}
 		}()
 
-		//commentMessage := pubsub.NewAppMessage(&userId, common.CreateCommentTopic, map[string]interface{}{
-		//})
+		commentMessage := pubsub.NewAppMessage(&userId, common.ReactedCommentTopic, map[string]interface{}{
+			"comment_id": commentId,
+			"user_id":    userId,
+		})
 
+		err := u.pubsub.Publish(ctx, commentMessage)
+		if err != nil {
+			panic(err)
+		}
 	}()
 
 	return true, nil
