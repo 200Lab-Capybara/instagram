@@ -24,11 +24,13 @@ var (
 	//"capybara:my_secret@tcp(localhost:3306)/users?parseTime=true"
 	natsConnectionString = os.Getenv("NATS_CONNECTION_STRING")
 	//	nats://localhost:4222
+
 )
 
 func main() {
 	r := gin.Default()
 	r.Use(middleware.HandleError())
+
 	v1 := r.Group("/v1")
 	// Connect to database
 	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
@@ -54,12 +56,15 @@ func main() {
 	builder.BuildReactPostService(con, natsCon, v1, authMiddleware)
 	builder.BuildPostService(con, v1, natsCon, authMiddleware)
 	builder.BuildReactStoryService(con, v1)
+	builder.BuildProfileService(con, v1)
 
 	v1.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
+
+	go builder.BuildRpcService(con)
 
 	r.Use(middleware.HandleError())
 	err = r.Run(httpAddr)

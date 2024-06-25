@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"instagram/common"
 	"time"
 )
 
@@ -61,15 +62,16 @@ func (status *PostStatus) MarshalJSON() ([]byte, error) {
 }
 
 type Post struct {
-	ID           uuid.UUID  `json:"id" gorm:"column:id"`
-	UserID       uuid.UUID  `json:"user_id" gorm:"column:user_id"`
-	Content      string     `json:"content" gorm:"column:content"`
-	LikeCount    int        `json:"like_count" gorm:"column:like_count"`
-	CommentCount int        `json:"comment_count" gorm:"column:comment_count"`
-	Status       PostStatus `json:"status" gorm:"column:status"`
-	UsedHashtag  bool       `json:"used_hashtag" gorm:"column:used_hashtag"`
-	CreatedAt    time.Time  `json:"created_at" gorm:"column:created_at"`
-	UpdatedAt    time.Time  `json:"updated_at" gorm:"column:updated_at"`
+	ID           uuid.UUID          `json:"id" gorm:"column:id"`
+	UserID       uuid.UUID          `json:"-" gorm:"column:user_id"`
+	Owner        *common.SimpleUser `json:"owner" gorm:"-"`
+	Content      string             `json:"content" gorm:"column:content"`
+	LikeCount    int                `json:"like_count" gorm:"column:like_count"`
+	CommentCount int                `json:"comment_count" gorm:"column:comment_count"`
+	Status       PostStatus         `json:"-" gorm:"column:status"`
+	UsedHashtag  bool               `json:"-" gorm:"column:used_hashtag"`
+	CreatedAt    time.Time          `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt    time.Time          `json:"updated_at" gorm:"column:updated_at"`
 }
 
 func (Post) TableName() string {

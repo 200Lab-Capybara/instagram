@@ -2,7 +2,6 @@ package usecaseprofile
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/uuid"
 	"instagram/app/internals/services/profile/model"
 	"instagram/common"
@@ -46,7 +45,6 @@ func (p *setupUseCase) Execute(ctx context.Context, profile *model.ProfileCreati
 		CountPosts:     0,
 		UserId:         common.User1UUID,
 	}
-	fmt.Println(profile.Avatar)
 
 	_, err = p.setupRepository.InsertProfile(ctx, data)
 	if err != nil {
