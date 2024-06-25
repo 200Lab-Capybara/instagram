@@ -3,16 +3,16 @@ package reactionpostmysql
 import (
 	"context"
 	"github.com/google/uuid"
-	"instagram/app/internals/services/reaction_post/model"
+	reactionpostmodel "instagram/app/internals/services/reaction_post/model"
 	"time"
 )
 
 func (m *mySQLStorage) CreateNewReactionPost(ctx context.Context, userId uuid.UUID, postId uuid.UUID) (bool, error) {
 	db := m.db.GetConnection()
 
-	newRow := model.ReactionPost{PostID: postId, UserID: userId, CreatedAt: time.Now().UTC()}
+	newRow := reactionpostmodel.ReactionPost{PostID: postId, UserID: userId, CreatedAt: time.Now().UTC()}
 
-	if err := db.Table(model.ReactionPost{}.TableName()).
+	if err := db.Table(reactionpostmodel.ReactionPost{}.TableName()).
 		Create(newRow).Error; err != nil {
 		return false, err
 	}

@@ -5,6 +5,8 @@ import "github.com/google/uuid"
 var User1UUID uuid.UUID = uuid.MustParse("01902ab4-2b07-7a62-b37e-1124c9fa5d46")
 var User2UUID uuid.UUID = uuid.MustParse("01902ab4-2b07-71ec-9420-d5d34f7c11bf")
 
+var ProfileUUID uuid.UUID = uuid.MustParse("01902f79-9295-7085-9128-ef90fead5dbe")
+
 //var UserUUID uuid.UUID = uuid.MustParse("01902ab4-2b07-7a62-b37e-1124c9fa5d46")
 //var UserUUID uuid.UUID = uuid.MustParse("01902ab4-2b07-7a62-b37e-1124c9fa5d46")
 
