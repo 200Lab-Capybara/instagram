@@ -16,6 +16,8 @@ func BuildReactPostService(con common.SQLDatabase, nat *nats.Conn, v1 *gin.Route
 	getPostRepo := rpc_client.NewGetPostRepo(con)
 	ps := natspubsub.NewNatsProvider(nat)
 	reactionUC := reactionpostusecase.NewLikePostUseCase(reactionRepo, getPostRepo, ps)
-	reactionHDL := reactionposthttp.NewReactionPostHandler(reactionUC)
+	getUserLikePostUC := reactionpostusecase.GetUserLikePostUC(reactionRepo, getPostRepo)
+
+	reactionHDL := reactionposthttp.NewReactionPostHandler(reactionUC, getUserLikePostUC)
 	reactionHDL.RegisterV1Router(v1, middleware)
 }
