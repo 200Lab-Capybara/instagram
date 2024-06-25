@@ -2,8 +2,10 @@ package usecasereactioncomment
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	modelreactioncomment "instagram/app/internals/services/reaction_comment/model"
+	"instagram/common"
 )
 
 type IReactionCommentRepository interface {
@@ -58,6 +60,18 @@ func (u *reactionCommentUC) Execute(ctx context.Context, commentId uuid.UUID, us
 		}
 		_, err = u.commentRepo.DecreaseReactionCountById(ctx, commentId, userId)
 	}
+
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				fmt.Printf("Error public message from topic %s\n", common.CreateCommentTopic)
+			}
+		}()
+
+		//commentMessage := pubsub.NewAppMessage(&userId, common.CreateCommentTopic, map[string]interface{}{
+		//})
+
+	}()
 
 	return true, nil
 
