@@ -2,17 +2,19 @@ package builder
 
 import (
 	"github.com/gin-gonic/gin"
-	nats2 "github.com/nats-io/nats.go"
 	postsmysql "instagram/app/infras/services/posts/repository/mysql"
 	postrpc_client "instagram/app/infras/services/posts/repository/rpc_client"
 	postshttp "instagram/app/infras/services/posts/transport/http"
 	postsubscriber "instagram/app/infras/services/posts/transport/subscriber"
 	postusecase "instagram/app/internals/services/posts/usecase"
-	"instagram/common"
 	"instagram/components/pubsub/natspubsub"
 )
 
-func BuildPostService(con common.SQLDatabase, v1 *gin.RouterGroup, pubsubCon *nats2.Conn, middleware gin.HandlerFunc) {
+func BuildPostService(svr ServiceContext, middleware gin.HandlerFunc) {
+	con := svr.GetDB()
+	pubsubCon := svr.GetNatsConn()
+	v1 := svr.GetV1()
+
 	postStorage := postsmysql.NewMysqlStorage(con)
 	pubsub := natspubsub.NewNatsProvider(pubsubCon)
 

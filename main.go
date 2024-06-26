@@ -10,6 +10,7 @@ import (
 	"instagram/builder"
 	"instagram/common"
 	"instagram/components/hasher"
+	logruslogger "instagram/components/logger/logrus"
 	"instagram/components/tokenprovider"
 	"instagram/middleware"
 	"log"
@@ -28,24 +29,29 @@ var (
 
 func main() {
 	r := gin.Default()
-	r.Use(middleware.HandleError())
+	logger := logruslogger.NewLogrusLogger()
+	logger.Info("Starting the server.....")
 
 	v1 := r.Group("/v1")
+	v1Internal := r.Group("/internal/v1")
 	// Connect to database
 	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	bcrypt := hasher.NewBcryptHasher()
 	con := common.NewSQLDatabase(db)
 
-	go builder.BuildRpcService(con)
-
+	// NOTE: Connect to NATS
 	natsCon, err := nats.Connect(natsConnectionString)
-
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	serviceContext := builder.NewServiceContext(con, bcrypt, natsCon, logger, v1, v1Internal)
+
+	go builder.BuildRpcService(serviceContext)
 
 	accessTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("ACCESS_SECRET"))
 	//refreshTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("REFRESH_SECRET"))
@@ -53,12 +59,12 @@ func main() {
 	userStorage := usermysql.NewMySQLStorage(con)
 	authMiddleware := middleware.RequiredAuth(userStorage, accessTokenProvider)
 
-	builder.BuildUserService(con, natsCon, bcrypt, accessTokenProvider, v1, authMiddleware)
+	builder.BuildUserService(serviceContext, accessTokenProvider, authMiddleware)
 	builder.BuildReactPostService(con, natsCon, v1, authMiddleware)
-	builder.BuildPostService(con, v1, natsCon, authMiddleware)
+	builder.BuildPostService(serviceContext, authMiddleware)
 	builder.BuildReactStoryService(con, v1)
 	builder.BuildProfileService(con, v1)
-	builder.BuildFollowService(con, v1, natsCon, authMiddleware)
+	builder.BuildFollowService(serviceContext, authMiddleware)
 
 	// NOTE: This is a simple internal service route
 	// NOTE: internal/v1/...
@@ -69,7 +75,7 @@ func main() {
 		})
 	})
 
-	r.Use(middleware.HandleError())
+	r.Use(middleware.HandleError(serviceContext))
 	err = r.Run(httpAddr)
 	if err != nil {
 		log.Fatal(err)

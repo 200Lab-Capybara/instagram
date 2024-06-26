@@ -2,18 +2,20 @@ package builder
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nats-io/nats.go"
 	usermysql "instagram/app/infras/services/user/repository/mysql"
 	userhttp "instagram/app/infras/services/user/transport/http"
 	usersubscriber "instagram/app/infras/services/user/transport/subscriber"
 	userusecase "instagram/app/internals/services/user/usecase"
-	"instagram/common"
-	"instagram/components/hasher"
 	"instagram/components/pubsub/natspubsub"
 	"instagram/components/tokenprovider"
 )
 
-func BuildUserService(con common.SQLDatabase, natsCon *nats.Conn, hasher hasher.Hasher, accessPro tokenprovider.Provider, v1 *gin.RouterGroup, middleware gin.HandlerFunc) {
+func BuildUserService(serviceContext ServiceContext, accessPro tokenprovider.Provider, middleware gin.HandlerFunc) {
+	con := serviceContext.GetDB()
+	hasher := serviceContext.GetHasher()
+	natsCon := serviceContext.GetNatsConn()
+	v1 := serviceContext.GetV1()
+
 	userStorage := usermysql.NewMySQLStorage(con)
 	pubsub := natspubsub.NewNatsProvider(natsCon)
 
