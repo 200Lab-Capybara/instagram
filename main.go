@@ -10,6 +10,7 @@ import (
 	"instagram/builder"
 	"instagram/common"
 	"instagram/components/hasher"
+	logruslogger "instagram/components/logger/logrus"
 	"instagram/components/tokenprovider"
 	"instagram/middleware"
 	"log"
@@ -28,9 +29,12 @@ var (
 
 func main() {
 	r := gin.Default()
+	logger := logruslogger.NewLogrusLogger()
 	r.Use(middleware.HandleError())
+	logger.Warn("Starting the server")
 
 	v1 := r.Group("/v1")
+	v1Internal := r.Group("/internal/v1")
 	// Connect to database
 	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if err != nil {
@@ -47,18 +51,19 @@ func main() {
 		log.Fatal(err)
 	}
 
+	serviceContext := builder.NewServiceContext(con, bcrypt, natsCon, logger, v1, v1Internal)
 	accessTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("ACCESS_SECRET"))
 	//refreshTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("REFRESH_SECRET"))
 
 	userStorage := usermysql.NewMySQLStorage(con)
 	authMiddleware := middleware.RequiredAuth(userStorage, accessTokenProvider)
 
-	builder.BuildUserService(con, natsCon, bcrypt, accessTokenProvider, v1, authMiddleware)
+	builder.BuildUserService(serviceContext, accessTokenProvider, authMiddleware)
 	builder.BuildReactPostService(con, natsCon, v1, authMiddleware)
-	builder.BuildPostService(con, v1, natsCon, authMiddleware)
+	builder.BuildPostService(serviceContext, authMiddleware)
 	builder.BuildReactStoryService(con, v1)
 	builder.BuildProfileService(con, v1)
-	builder.BuildFollowService(con, v1, natsCon, authMiddleware)
+	builder.BuildFollowService(serviceContext, authMiddleware)
 
 	// NOTE: This is a simple internal service route
 	// NOTE: internal/v1/...
