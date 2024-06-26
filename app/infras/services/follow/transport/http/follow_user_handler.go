@@ -6,15 +6,18 @@ import (
 )
 
 type followUserHandler struct {
-	followUserUseCase followuserusecase.FollowUserUseCase
+	followUserUseCase   followuserusecase.FollowUserUseCase
+	getFollowingUseCase followuserusecase.GetListFollowingUseCase
 }
 
-func NewFollowUserHandler(followUserUseCase followuserusecase.FollowUserUseCase) *followUserHandler {
+func NewFollowUserHandler(followUserUseCase followuserusecase.FollowUserUseCase, getFollowingUseCase followuserusecase.GetListFollowingUseCase) *followUserHandler {
 	return &followUserHandler{
-		followUserUseCase: followUserUseCase,
+		followUserUseCase:   followUserUseCase,
+		getFollowingUseCase: getFollowingUseCase,
 	}
 }
 
 func (hdl *followUserHandler) RegisterV1Router(v1 *gin.RouterGroup, middleware gin.HandlerFunc) {
 	v1.POST("/follow/:following_id", middleware, hdl.FollowUnfollowUser())
+	v1.GET("/follow/:user_id/following", middleware, hdl.GetFollowingHandler())
 }

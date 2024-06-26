@@ -7,6 +7,10 @@ message GetUserByIdReq {
   string id = 1;
 }
 
+message GetUserByIdsReq{
+  repeated string ids = 1;
+}
+
 message PublicUserInfo {
   string id = 1;
   string first_name = 2;
@@ -22,6 +26,11 @@ message PublicUserInfoResp {
   PublicUserInfo user = 1;
 }
 
+message PublicUsersInfosResp {
+  repeated PublicUserInfo users = 1;
+}
+
 service UserService {
   rpc GetUserById(GetUserByIdReq) returns (PublicUserInfoResp);
+  rpc GetUserByIds(GetUserByIdsReq) returns (PublicUsersInfosResp);
 }
