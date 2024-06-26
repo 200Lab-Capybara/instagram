@@ -30,8 +30,7 @@ var (
 func main() {
 	r := gin.Default()
 	logger := logruslogger.NewLogrusLogger()
-	r.Use(middleware.HandleError())
-	logger.Warn("Starting the server")
+	logger.Info("Starting the server.....")
 
 	v1 := r.Group("/v1")
 	v1Internal := r.Group("/internal/v1")
@@ -40,18 +39,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	bcrypt := hasher.NewBcryptHasher()
 	con := common.NewSQLDatabase(db)
 
-	go builder.BuildRpcService(con)
-
+	// NOTE: Connect to NATS
 	natsCon, err := nats.Connect(natsConnectionString)
-
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	serviceContext := builder.NewServiceContext(con, bcrypt, natsCon, logger, v1, v1Internal)
+
+	go builder.BuildRpcService(serviceContext)
+
 	accessTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("ACCESS_SECRET"))
 	//refreshTokenProvider := tokenprovider.NewJWTProvider(os.Getenv("REFRESH_SECRET"))
 
@@ -74,7 +75,7 @@ func main() {
 		})
 	})
 
-	r.Use(middleware.HandleError())
+	r.Use(middleware.HandleError(serviceContext))
 	err = r.Run(httpAddr)
 	if err != nil {
 		log.Fatal(err)
