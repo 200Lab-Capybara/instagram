@@ -22,27 +22,27 @@ func GetUserLikePostUC(getUserLikePostRepo GetUserLikePostRepo, postRepository G
 	}
 }
 
-func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID) (any, error) {
+func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID) ([]usermodel.User, error) {
 	post, err := uc.postRepository.FindById(ctx, postId)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	if post.Status == "deleted" {
-		return false, common.ErrInvalidRequest(reactionpostmodel.ErrPostDoNotExist)
+		return nil, common.ErrInvalidRequest(reactionpostmodel.ErrPostDoNotExist)
 	}
 
-	listUser, err := uc.getUserLikePostRepo.GetUserIdLikePost(ctx, postId)
+	listUserId, err := uc.getUserLikePostRepo.GetUserIdLikePost(ctx, postId)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
-	if len(listUser) == 0 {
-		return false, common.ErrInvalidRequest(reactionpostmodel.ErrRecordReactPostNotFound)
+	if len(listUserId) == 0 {
+		return nil, common.ErrInvalidRequest(reactionpostmodel.ErrRecordReactPostNotFound)
 	}
 
-	listInfo, err := uc.getUserInfoRepo.GetUserInfoById(ctx, listUser)
+	listInfo, err := uc.getUserInfoRepo.GetUserInfoById(ctx, listUserId)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	userMap := make(map[uuid.UUID]usermodel.User)
@@ -50,11 +50,27 @@ func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID)
 		userMap[userInfo.ID] = userInfo
 	}
 
-	return userMap, nil
+	var listUserLikePost []usermodel.User
+
+	for _, userId := range listUserId {
+		userInfo, found := userMap[userId]
+		if found {
+			user := usermodel.User{
+				ID:        userInfo.ID,
+				FirstName: userInfo.FirstName,
+				LastName:  userInfo.LastName,
+				CreatedAt: userInfo.CreatedAt,
+				UpdatedAt: userInfo.UpdatedAt,
+			}
+			listUserLikePost = append(listUserLikePost, user)
+		}
+	}
+
+	return listUserLikePost, nil
 }
 
 type GetUserLikePostUseCase interface {
-	Execute(ctx context.Context, post_id uuid.UUID) (any, error)
+	Execute(ctx context.Context, post_id uuid.UUID) ([]usermodel.User, error)
 }
 
 type GetUserLikePostRepo interface {
