@@ -34,7 +34,8 @@ func BuildRpcService(ctxSvr ServiceContext) {
 
 	userStorage := usermysql.NewMySQLStorage(ctxSvr.GetDB())
 	findUserByIdUC := userusecase.NewGetUserByIdUseCase(userStorage)
-	pb.RegisterUserServiceServer(s, userrpc.NewUserRpcHandler(findUserByIdUC))
+	findUsersByIdsUC := userusecase.NewGetUserByIdsUseCase(userStorage)
+	pb.RegisterUserServiceServer(s, userrpc.NewUserRpcHandler(findUserByIdUC, findUsersByIdsUC))
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalln(err)
