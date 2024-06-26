@@ -31,6 +31,7 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, reques
 		return false, err
 	}
 	reactType := common.ReactedStoryLike
+
 	storyModel := model.ReactionStory{
 		UserId:    userId,
 		StoryId:   storyId,
