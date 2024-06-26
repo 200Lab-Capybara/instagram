@@ -53,7 +53,7 @@ func main() {
 	builder.BuildUserService(con, bcrypt, accessTokenProvider, v1, authMiddleware)
 	builder.BuildReactPostService(con, v1)
 	builder.BuildPostService(con, v1, natsCon, authMiddleware)
-	builder.BuildReactStoryService(con, natsCon, v1)
+	builder.BuildReactStoryService(con, natsCon, v1, authMiddleware)
 
 	v1.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

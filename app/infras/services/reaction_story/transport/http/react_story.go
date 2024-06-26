@@ -9,7 +9,7 @@ import (
 
 func (hdl *reactionStoryHandler) ReactStoryHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userId := common.User1UUID
+		requester := c.MustGet(common.RequesterKey).(common.Requester)
 		storyId, err := uuid.Parse(c.Param("id"))
 
 		if err != nil {
@@ -19,7 +19,7 @@ func (hdl *reactionStoryHandler) ReactStoryHandler() gin.HandlerFunc {
 			return
 		}
 
-		_, err = hdl.uc.Execute(c.Request.Context(), storyId, userId)
+		_, err = hdl.uc.Execute(c.Request.Context(), storyId, requester)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

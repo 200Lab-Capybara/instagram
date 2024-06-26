@@ -13,10 +13,10 @@ import (
 func (m *mySQLStorage) HasBeenReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error) {
 	db := m.db.GetConnection()
 	newRow := &model.ReactionStory{
-		UserId:     uid,
-		StoryId:    sid,
-		Created_At: time.Now().UTC(),
-		Updated_At: nil,
+		UserId:    uid,
+		StoryId:   sid,
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: nil,
 	}
 	err := db.Table(model.ReactionStory{}.TableName()).Where("user_id = ? AND story_id = ?", uid, sid).First(newRow).Error
 	if err != nil {

@@ -13,6 +13,6 @@ func NewReactionStoryHandler(uc reactionstoryusecase.InsertReactionStoryUseCase)
 	return &reactionStoryHandler{uc: uc}
 }
 
-func (hdl *reactionStoryHandler) RegisterV1Router(r *gin.RouterGroup) {
-	r.POST("/story/:id/reaction", hdl.ReactStoryHandler())
+func (hdl *reactionStoryHandler) RegisterV1Router(r *gin.RouterGroup, middleware gin.HandlerFunc) {
+	r.POST("/story/:id/reaction", middleware, hdl.ReactStoryHandler())
 }

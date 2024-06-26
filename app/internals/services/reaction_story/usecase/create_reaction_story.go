@@ -23,7 +23,8 @@ func NewInsertReactionStoryUseCase(reactRepo IReactionStoryRepository, storyRepo
 	}
 }
 
-func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId uuid.UUID) (bool, error) {
+func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, request common.Requester) (bool, error) {
+	userId := request.UserId()
 	_, err := u.storyRepo.FindStoryById(ctx, storyId)
 	if err != nil {
 		return false, err
@@ -35,20 +36,12 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 		if err != nil {
 			return false, err
 		}
-		//_, err = u.storyRepo.DecreaseReactCountById(ctx, storyId)
-		//if err != nil {
-		//	return false, err
-		//}
 		reactType = common.ReactedPostUnlike
 	} else {
 		_, err = u.reactionStoryRepo.CreateNewReactionStory(ctx, storyId, userId)
 		if err != nil {
 			return false, err
 		}
-		//_, err = u.storyRepo.IncreaseReactCountById(ctx, storyId)
-		//if err != nil {
-		//	return false, err
-		//}
 	}
 	go func() {
 		defer func() {
@@ -62,7 +55,6 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 			"react_type": reactType,
 		})
 
-		// TODO: Publish CreatedPostTopic event
 		err := u.pubsub.Publish(ctx, postMessage)
 		if err != nil {
 			panic(err)
@@ -72,7 +64,7 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, userId
 }
 
 type InsertReactionStoryUseCase interface {
-	Execute(ctx context.Context, storyId uuid.UUID, userId uuid.UUID) (bool, error)
+	Execute(ctx context.Context, storyId uuid.UUID, request common.Requester) (bool, error)
 }
 
 type IReactionStoryRepository interface {
@@ -82,6 +74,6 @@ type IReactionStoryRepository interface {
 }
 type getStoryRepository interface {
 	FindStoryById(ctx context.Context, sid uuid.UUID) (*model.Story, error)
-	IncreaseReactCountById(ctx context.Context, sid uuid.UUID) (bool, error)
-	DecreaseReactCountById(ctx context.Context, sid uuid.UUID) (bool, error)
+	//IncreaseReactCountById(ctx context.Context, sid uuid.UUID) (bool, error)
+	//DecreaseReactCountById(ctx context.Context, sid uuid.UUID) (bool, error)
 }
