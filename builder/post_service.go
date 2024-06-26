@@ -2,6 +2,7 @@ package builder
 
 import (
 	"github.com/gin-gonic/gin"
+	postapi "instagram/app/infras/services/posts/repository/api"
 	postsmysql "instagram/app/infras/services/posts/repository/mysql"
 	postrpc_client "instagram/app/infras/services/posts/repository/rpc_client"
 	postshttp "instagram/app/infras/services/posts/transport/http"
@@ -21,15 +22,18 @@ func BuildPostService(svr ServiceContext, middleware gin.HandlerFunc) {
 	rpcConClient := BuildUserRpcClient()
 	rpcClient := postrpc_client.NewPostRpcClient(rpcConClient)
 
+	followAPI := postapi.NewFollowAPI("http://localhost:8001/internal/v1/rpc")
+
 	createPostUseCase := postusecase.NewCreatePostUseCase(postStorage, pubsub)
 	getListPostsByUserIdUC := postusecase.NewGetListPostByUserIdUseCase(postStorage, rpcClient)
 	increaseLikeCountUC := postusecase.NewIncreaseLikeCountUseCase(postStorage)
 	decreaseLikeCountUC := postusecase.NewDecreaseLikeCountUseCase(postStorage)
+	getFeedUC := postusecase.NewGetFeedUseCase(rpcClient, postStorage, followAPI)
 
 	// RPC Client
 
 	// HTTP Handler
-	postHandler := postshttp.NewPostHandler(createPostUseCase, getListPostsByUserIdUC)
+	postHandler := postshttp.NewPostHandler(createPostUseCase, getListPostsByUserIdUC, getFeedUC)
 	postHandler.RegisterV1Router(v1, middleware)
 
 	// Post Subscriber

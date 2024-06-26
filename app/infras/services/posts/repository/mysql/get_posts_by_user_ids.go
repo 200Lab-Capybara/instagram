@@ -7,11 +7,11 @@ import (
 	"instagram/common"
 )
 
-func (store *mysqlStorage) GetListPostByUserId(ctx context.Context, userId uuid.UUID, paging *common.Paging) ([]postsmodel.Post, error) {
+func (store *mysqlStorage) GetPostsByUserIds(ctx context.Context, ids []uuid.UUID, paging *common.Paging) ([]postsmodel.Post, error) {
 	var data []postsmodel.Post
 	db := store.db.GetConnection()
 
-	db = db.Table(postsmodel.Post{}.TableName()).Where("status <> ?", postsmodel.PostDeleted).Where("user_id=?", userId)
+	db = db.Table(postsmodel.Post{}.TableName()).Where("status <> ?", postsmodel.PostDeleted).Where("user_id IN ?", ids)
 
 	if err := db.Select("id").Count(&paging.Total).Error; err != nil {
 		return nil, err

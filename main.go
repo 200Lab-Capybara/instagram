@@ -33,7 +33,7 @@ func main() {
 	logger.Info("Starting the server.....")
 
 	v1 := r.Group("/v1")
-	v1Internal := r.Group("/internal/v1")
+	v1Internal := r.Group("/internal/v1/rpc")
 	// Connect to database
 	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if err != nil {
