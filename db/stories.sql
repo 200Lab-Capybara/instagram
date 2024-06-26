@@ -7,7 +7,7 @@ CREATE TABLE `stories`
     `expires_time`  int                  DEFAULT NULL,
     `created_at`    datetime(6) DEFAULT NULL,
     `updated_at`    datetime(6) DEFAULT NULL,
-    `image_id`      varchar(36) NOT NULL,
+    `image`         json        NOT NULL,
     `is_active`     tinyint(1) NOT NULL DEFAULT '1',
     PRIMARY KEY (`id`),
     UNIQUE KEY `stories_user_id_idx` (`user_id`) USING BTREE,
