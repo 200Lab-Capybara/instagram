@@ -1,19 +1,19 @@
-package postsmysql
+package followmysql
 
 import (
 	"context"
 	"github.com/google/uuid"
-	postsmodel "instagram/app/internals/services/posts/model"
+	followusermodel "instagram/app/internals/services/follow/model"
 	"instagram/common"
 )
 
-func (store *mysqlStorage) GetListPostByUserId(ctx context.Context, userId uuid.UUID, paging *common.Paging) ([]postsmodel.Post, error) {
-	var data []postsmodel.Post
+func (store *mysqlStorage) GetListFollowing(ctx context.Context, userId *uuid.UUID, paging *common.Paging) ([]followusermodel.FollowUser, error) {
+	var data []followusermodel.FollowUser
 	db := store.db.GetConnection()
 
-	db = db.Table(postsmodel.Post{}.TableName()).Where("user_id=?", userId)
+	db = db.Table(followusermodel.FollowUser{}.TableName()).Where("user_id = ?", userId)
 
-	if err := db.Select("id").Count(&paging.Total).Error; err != nil {
+	if err := db.Select("user_id").Count(&paging.Total).Error; err != nil {
 		return nil, err
 	}
 

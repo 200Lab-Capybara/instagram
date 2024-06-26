@@ -17,7 +17,7 @@ func NewGetListFollowingUseCase(followRepo GetListFollowingRepository, userRepo 
 }
 
 type GetListFollowingUseCase interface {
-	Execute(ctx context.Context, uid uuid.UUID, paging *common.Paging) ([]common.SimpleUser, error)
+	Execute(ctx context.Context, uid *uuid.UUID, paging *common.Paging) ([]common.SimpleUser, error)
 }
 
 type GetListFollowingRepository interface {
@@ -28,11 +28,11 @@ type GetListUserByIdsRepository interface {
 	GetUserByIds(ctx context.Context, ids []uuid.UUID) ([]common.SimpleUser, error)
 }
 
-func (g *getListFollowingUseCase) Execute(ctx context.Context, uid uuid.UUID, paging *common.Paging) ([]common.SimpleUser, error) {
+func (g *getListFollowingUseCase) Execute(ctx context.Context, uid *uuid.UUID, paging *common.Paging) ([]common.SimpleUser, error) {
 	paging.Process()
 	userId := uid
 
-	data, err := g.followRepo.GetListFollowing(ctx, &userId, paging)
+	data, err := g.followRepo.GetListFollowing(ctx, userId, paging)
 	if err != nil {
 		return nil, err
 	}

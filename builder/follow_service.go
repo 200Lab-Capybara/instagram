@@ -18,7 +18,8 @@ func BuildFollowService(ctxSvr ServiceContext, middleware gin.HandlerFunc) {
 
 	followUnfollowUC := followusecase.NewFollowUserUseCase(followStore, pubsub)
 	getFollowingUC := followusecase.NewGetListFollowingUseCase(followStore, rpcClient)
+	getFollowerUC := followusecase.NewGetListFollowerUseCase(rpcClient, followStore)
 
-	followHandler := followhttp.NewFollowUserHandler(followUnfollowUC, getFollowingUC)
+	followHandler := followhttp.NewFollowUserHandler(followUnfollowUC, getFollowingUC, getFollowerUC)
 	followHandler.RegisterV1Router(ctxSvr.GetV1(), middleware)
 }

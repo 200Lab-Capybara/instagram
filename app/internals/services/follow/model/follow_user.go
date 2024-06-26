@@ -3,6 +3,7 @@ package followusermodel
 import (
 	"errors"
 	"github.com/google/uuid"
+	"instagram/common"
 	"time"
 )
 
@@ -17,6 +18,11 @@ type FollowUser struct {
 	Following uuid.UUID  `json:"following" gorm:"column:following"`
 	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at"`
 	UpdatedAt *time.Time `json:"updated_at" gorm:"column:updated_at"`
+}
+
+type Follower struct {
+	common.SimpleUser
+	Followed bool `json:"followed"`
 }
 
 func (FollowUser) TableName() string {

@@ -7,10 +7,13 @@ import (
 	"instagram/common"
 )
 
-func (store *mysqlStorage) GetListFollowing(ctx context.Context, userId *uuid.UUID, paging *common.Paging) ([]followusermodel.FollowUser, error) {
+func (store *mysqlStorage) GetListFollower(ctx context.Context, userId uuid.UUID, paging *common.Paging) ([]followusermodel.FollowUser, error) {
 	var data []followusermodel.FollowUser
 	db := store.db.GetConnection()
-	if err := db.Select("user_id").Where("user_id=?", userId).Table(followusermodel.FollowUser{}.TableName()).Count(&paging.Total).Error; err != nil {
+
+	db = db.Table(followusermodel.FollowUser{}.TableName()).Where("following = ?", userId)
+
+	if err := db.Select("user_id").Count(&paging.Total).Error; err != nil {
 		return nil, err
 	}
 
