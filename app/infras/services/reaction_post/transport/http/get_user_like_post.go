@@ -23,10 +23,6 @@ func (hdl *reactionPostHandler) GetUserLikePostHandler() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
 		}
-		if result == nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": "Nothing"})
-			return
-		}
 
 		c.JSON(http.StatusOK, common.SimpleSuccessResponse(result))
 	}

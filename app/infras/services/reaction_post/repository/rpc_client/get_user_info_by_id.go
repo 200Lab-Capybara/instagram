@@ -20,7 +20,7 @@ func (s *getUserInfoRepo) GetUserInfoById(ctx context.Context, userIDs []uuid.UU
 
 	db := s.db.GetConnection().Table(usermodel.User{}.TableName())
 
-	if err := db.Where("id IN ?", userIDs).First(&listInfo).Error; err != nil {
+	if err := db.Where("id IN ?", userIDs).Find(&listInfo).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 	return listInfo, nil

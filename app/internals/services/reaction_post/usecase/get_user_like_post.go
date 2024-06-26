@@ -27,19 +27,20 @@ func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID)
 	if err != nil {
 		return false, err
 	}
-
 	if post.Status == "deleted" {
 		return false, common.ErrInvalidRequest(reactionpostmodel.ErrPostDoNotExist)
 	}
 
 	listUser, err := uc.getUserLikePostRepo.GetUserIdLikePost(ctx, postId)
-
 	if err != nil {
 		return false, err
 	}
 
-	listInfo, err := uc.getUserInfoRepo.GetUserInfoById(ctx, listUser)
+	if len(listUser) == 0 {
+		return false, common.ErrInvalidRequest(reactionpostmodel.ErrRecordReactPostNotFound)
+	}
 
+	listInfo, err := uc.getUserInfoRepo.GetUserInfoById(ctx, listUser)
 	if err != nil {
 		return false, err
 	}
