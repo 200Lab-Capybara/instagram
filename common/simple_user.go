@@ -8,7 +8,10 @@ type SimpleUser struct {
 	UserId    uuid.UUID `json:"user_id"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
-	Role      string    `json:"role"`
+	Role      string    `json:"-"`
+	Status    string    `json:"-"`
+	Follower  int       `json:"follower"`
+	Following int       `json:"following"`
 }
 
 type Requester interface {
@@ -16,7 +19,6 @@ type Requester interface {
 	FirstName() string
 	LastName() string
 	Role() string
-	Status() string
 	GetSimpleUser() *SimpleUser
 }
 
@@ -26,6 +28,8 @@ type requesterData struct {
 	lastName  string
 	role      string
 	status    string
+	follower  int
+	following int
 }
 
 func (r *requesterData) UserId() uuid.UUID {
@@ -41,15 +45,19 @@ func (r *requesterData) GetSimpleUser() *SimpleUser {
 		FirstName: r.firstName,
 		LastName:  r.lastName,
 		Role:      r.role,
+		Following: r.following,
+		Follower:  r.follower,
 	}
 }
 
-func NewRequester(sub uuid.UUID, firstName, lastName, role, status string) Requester {
+func NewRequester(sub uuid.UUID, firstName, lastName, role, status string, follower int, following int) Requester {
 	return &requesterData{
 		userId:    sub,
 		firstName: firstName,
 		lastName:  lastName,
 		role:      role,
 		status:    status,
+		follower:  follower,
+		following: following,
 	}
 }

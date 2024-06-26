@@ -28,6 +28,8 @@ type User struct {
 	Password  string            `json:"password" gorm:"column:password"`
 	Salt      string            `json:"salt" gorm:"column:salt"`
 	Role      common.UserRole   `json:"role" gorm:"column:role"`
+	Follower  int               `json:"follower" gorm:"column:follower"`
+	Following int               `json:"following" gorm:"column:following"`
 	Status    common.UserStatus `json:"status" gorm:"column:status"`
 	CreatedAt *time.Time        `json:"created_at" gorm:"column:created_at"`
 	UpdatedAt *time.Time        `json:"updated_at" gorm:"column:updated_at"`

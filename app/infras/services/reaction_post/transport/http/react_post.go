@@ -11,14 +11,14 @@ import (
 
 func (hdl *reactionPostHandler) ReactPostHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userId := common.User1UUID
+		requester := c.MustGet(common.RequesterKey).(common.Requester)
 		postId, err := uuid.Parse(c.Param("id"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid post ID"})
 			return
 		}
 
-		success, err := hdl.uc.Execute(c.Request.Context(), userId, postId)
+		success, err := hdl.uc.Execute(c.Request.Context(), requester, postId)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return

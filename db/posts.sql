@@ -9,5 +9,6 @@ CREATE TABLE `posts` (
      `created_at` datetime(6) DEFAULT NULL,
      `updated_at` datetime(6) DEFAULT NULL,
      PRIMARY KEY (`id`),
-     KEY `posts_user_id_idx` (`user_id`) USING BTREE
+     KEY `posts_user_id_idx` (`user_id`) USING BTREE,
+     KEY `posts_created_at_idx` (`created_at`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

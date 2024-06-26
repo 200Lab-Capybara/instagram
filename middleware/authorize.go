@@ -59,7 +59,7 @@ func RequiredAuth(authStore AuthStore, provider tokenprovider.Provider) gin.Hand
 			return
 		}
 
-		requester := common.NewRequester(user.ID, user.FirstName, user.LastName, user.Role.String(), user.Status.String())
+		requester := common.NewRequester(user.ID, user.FirstName, user.LastName, user.Role.String(), user.Status.String(), user.Follower, user.Following)
 
 		c.Set(common.RequesterKey, requester)
 
