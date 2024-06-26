@@ -7,6 +7,7 @@ import (
 	"instagram/app/internals/services/reaction_story/model"
 	"instagram/common"
 	"instagram/components/pubsub"
+	"time"
 )
 
 type reactionStoryUC struct {
@@ -15,7 +16,7 @@ type reactionStoryUC struct {
 	pubsub            pubsub.MessageBroker
 }
 
-func NewInsertReactionStoryUseCase(reactRepo IReactionStoryRepository, storyRepo getStoryRepository, pubsub pubsub.MessageBroker) InsertReactionStoryUseCase {
+func NewInsertReactionStoryUseCase(reactRepo IReactionStoryRepository, storyRepo getStoryRepository, pubsub pubsub.MessageBroker) ReactionStoryUseCase {
 	return &reactionStoryUC{
 		reactRepo,
 		storyRepo,
@@ -30,13 +31,19 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, reques
 		return false, err
 	}
 	reactType := common.ReactedStoryLike
-	existReactStory, err := u.reactionStoryRepo.HasBeenReactionStory(ctx, storyId, userId)
+	storyModel := model.ReactionStory{
+		UserId:    userId,
+		StoryId:   storyId,
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+	existReactStory, err := u.reactionStoryRepo.HasBeenReactionStory(ctx, storyModel)
 	if existReactStory && err == nil {
 		_, err = u.reactionStoryRepo.RemoveReactionStory(ctx, storyId, userId)
 		if err != nil {
 			return false, err
 		}
-		reactType = common.ReactedPostUnlike
+		reactType = common.ReactedStoryUnlike
 	} else {
 		_, err = u.reactionStoryRepo.CreateNewReactionStory(ctx, storyId, userId)
 		if err != nil {
@@ -50,8 +57,8 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, reques
 			}
 		}()
 
-		postMessage := pubsub.NewAppMessage(&userId, common.ReactedPostTopic, map[string]interface{}{
-			"post_id":    storyId,
+		postMessage := pubsub.NewAppMessage(&userId, common.ReactedStoryTopic, map[string]interface{}{
+			"story_id":   storyId,
 			"react_type": reactType,
 		})
 
@@ -63,13 +70,13 @@ func (u *reactionStoryUC) Execute(ctx context.Context, storyId uuid.UUID, reques
 	return true, nil
 }
 
-type InsertReactionStoryUseCase interface {
+type ReactionStoryUseCase interface {
 	Execute(ctx context.Context, storyId uuid.UUID, request common.Requester) (bool, error)
 }
 
 type IReactionStoryRepository interface {
 	CreateNewReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
-	HasBeenReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
+	HasBeenReactionStory(ctx context.Context, story model.ReactionStory) (bool, error)
 	RemoveReactionStory(ctx context.Context, sid uuid.UUID, uid uuid.UUID) (bool, error)
 }
 type getStoryRepository interface {

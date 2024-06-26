@@ -14,7 +14,7 @@ func (m *mySQLStorage) CreateNewReactionStory(ctx context.Context, sid uuid.UUID
 		UserId:    uid,
 		StoryId:   sid,
 		CreatedAt: time.Now().UTC(),
-		UpdatedAt: nil,
+		UpdatedAt: time.Now().UTC(),
 	}
 	if err := db.Table(model.ReactionStory{}.TableName()).
 		Create(newRow).Error; err != nil {

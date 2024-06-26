@@ -6,10 +6,10 @@ import (
 )
 
 type reactionStoryHandler struct {
-	uc reactionstoryusecase.InsertReactionStoryUseCase
+	uc reactionstoryusecase.ReactionStoryUseCase
 }
 
-func NewReactionStoryHandler(uc reactionstoryusecase.InsertReactionStoryUseCase) *reactionStoryHandler {
+func NewReactionStoryHandler(uc reactionstoryusecase.ReactionStoryUseCase) *reactionStoryHandler {
 	return &reactionStoryHandler{uc: uc}
 }
 
