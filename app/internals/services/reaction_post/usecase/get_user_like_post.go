@@ -22,7 +22,7 @@ func GetUserLikePostUC(getUserLikePostRepo GetUserLikePostRepo, postRepository G
 	}
 }
 
-func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID) ([]usermodel.User, error) {
+func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID) ([]common.SimpleUser, error) {
 	post, err := uc.postRepository.FindById(ctx, postId)
 	if err != nil {
 		return nil, err
@@ -50,27 +50,23 @@ func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID)
 		userMap[userInfo.ID] = userInfo
 	}
 
-	var listUserLikePost []usermodel.User
+	listUserLikePost := make([]common.SimpleUser, len(listUserId))
 
-	for _, userId := range listUserId {
-		userInfo, found := userMap[userId]
-		if found {
-			user := usermodel.User{
-				ID:        userInfo.ID,
-				FirstName: userInfo.FirstName,
-				LastName:  userInfo.LastName,
-				CreatedAt: userInfo.CreatedAt,
-				UpdatedAt: userInfo.UpdatedAt,
-			}
-			listUserLikePost = append(listUserLikePost, user)
+	for i, userId := range listUserId {
+
+		listUserLikePost[i] = common.SimpleUser{
+			UserId:    userMap[userId].ID,
+			FirstName: userMap[userId].FirstName,
+			LastName:  userMap[userId].LastName,
 		}
+
 	}
 
 	return listUserLikePost, nil
 }
 
 type GetUserLikePostUseCase interface {
-	Execute(ctx context.Context, post_id uuid.UUID) ([]usermodel.User, error)
+	Execute(ctx context.Context, post_id uuid.UUID) ([]common.SimpleUser, error)
 }
 
 type GetUserLikePostRepo interface {
