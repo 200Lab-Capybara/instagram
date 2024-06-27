@@ -8,7 +8,7 @@ import (
 	"instagram/common"
 )
 
-func (repo *getCommentRepo) IncreaseReacCountById(ctx context.Context, commentId uuid.UUID) (bool, error) {
+func (repo *getCommentRepo) IncreaseReactionCountById(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error) {
 	if err := repo.db.GetConnection().
 		Table(modelreactioncomment.Comment{}.TableName()).
 		Where("id = ?", commentId).

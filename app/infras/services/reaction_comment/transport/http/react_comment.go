@@ -10,7 +10,7 @@ import (
 func (hdl *reactionCommentHandler) ReactCommentHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := common.User1UUID
-		commentId, err := uuid.Parse(c.Param("commentId"))
+		commentId, err := uuid.Parse(c.Param("id"))
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -19,7 +19,7 @@ func (hdl *reactionCommentHandler) ReactCommentHandler() gin.HandlerFunc {
 			return
 		}
 
-		_, err = hdl.uc.Execute(c.Request.Context(), userId, commentId)
+		_, err = hdl.uc.Execute(c.Request.Context(), commentId, userId)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{

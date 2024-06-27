@@ -13,10 +13,10 @@ var (
 )
 
 type ReactionComment struct {
-	UserId    uuid.UUID  `json:"user_id"`
-	CommentId uuid.UUID  `json:"comment_id"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	UserId    uuid.UUID  `json:"user_id" gorm:"column:user_id"`
+	CommentId uuid.UUID  `json:"comment_id" gorm:"column:comment_id"`
+	CreatedAt time.Time  `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt *time.Time `json:"updated_at" gorm:"column:updated_at"`
 }
 
 func (ReactionComment) TableName() string {

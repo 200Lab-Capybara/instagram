@@ -12,6 +12,7 @@ type reactionCommentHandler struct {
 func NewReactionCommentHandler(uc usecasereactioncomment.InsertReactionCommentUseCase) *reactionCommentHandler {
 	return &reactionCommentHandler{uc: uc}
 }
+
 func (hdl *reactionCommentHandler) RegisterV1Router(r *gin.RouterGroup) {
-	r.POST("/comment/:id/reaction", hdl.ReactCommentHandler())
+	r.POST("/comments/:id/react", hdl.ReactCommentHandler())
 }

@@ -2,11 +2,8 @@ package usecasereactioncomment
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/uuid"
 	modelreactioncomment "instagram/app/internals/services/reaction_comment/model"
-	"instagram/common"
-	"instagram/components/pubsub"
 )
 
 type IReactionCommentRepository interface {
@@ -15,72 +12,68 @@ type IReactionCommentRepository interface {
 	RemoveReactionComment(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error)
 }
 
-type getCommentRepository interface {
-	FinCommentById(ctx context.Context, commentId uuid.UUID) (modelreactioncomment.Comment, error)
+type GetCommentRepository interface {
+	FindCommentById(ctx context.Context, commentId uuid.UUID) (*modelreactioncomment.Comment, error)
 	IncreaseReactionCountById(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error)
 	DecreaseReactionCountById(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error)
 }
 
 type reactionCommentUC struct {
 	reactionCommentRepo IReactionCommentRepository
-	commentRepo         getCommentRepository
-	pubsub              pubsub.MessageBroker
+	commentRepo         GetCommentRepository
 }
 
 type InsertReactionCommentUseCase interface {
 	Execute(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error)
 }
 
-func NewInsertReactionCommentUseCase(reactRepo IReactionCommentRepository, commentRepo getCommentRepository, pubsub pubsub.MessageBroker) InsertReactionCommentUseCase {
+func NewInsertReactionCommentUseCase(reactRepo IReactionCommentRepository, commentRepo GetCommentRepository) InsertReactionCommentUseCase {
 	return &reactionCommentUC{
 		reactRepo,
 		commentRepo,
-		pubsub,
 	}
 }
 
 func (u *reactionCommentUC) Execute(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error) {
-	_, err := u.reactionCommentRepo.CreateNewReactionComment(ctx, commentId, userId)
+	// 1. Tim comment voi commentId xem co ko
+	// 2. Check comment da co react chua
+	// 2.1 Neu da co react thi remove react
+	// 2.1.1 Sau do Decrease react
+	// 2.2 Neu chua co thi create react
+	// 2.2.2 Sau do Increase react
+
+	// 1
+	_, err := u.commentRepo.FindCommentById(ctx, commentId)
 	if err != nil {
 		return false, err
 	}
 
-	existReactionComment, err := u.reactionCommentRepo.HasBeenReactionComment(ctx, commentId, userId)
-	if err != nil {
-		return false, err
-	}
-
-	if existReactionComment {
-		_, err = u.reactionCommentRepo.RemoveReactionComment(ctx, commentId, userId)
+	// 2
+	existed, err := u.reactionCommentRepo.HasBeenReactionComment(ctx, commentId, userId)
+	if existed == true {
+		// 2.1
+		_, err := u.reactionCommentRepo.RemoveReactionComment(ctx, commentId, userId)
 		if err != nil {
 			return false, err
 		}
-		_, err = u.reactionCommentRepo.CreateNewReactionComment(ctx, commentId, userId)
+		// 2.1.1
+		_, err = u.commentRepo.DecreaseReactionCountById(ctx, commentId, userId)
+		if err != nil {
+			return false, err
+		}
+
 	} else {
+		//2.2
+		_, err := u.reactionCommentRepo.CreateNewReactionComment(ctx, commentId, userId)
+		if err != nil {
+			return false, err
+		}
+		//2.2.2
 		_, err = u.commentRepo.IncreaseReactionCountById(ctx, commentId, userId)
 		if err != nil {
 			return false, err
 		}
-		_, err = u.commentRepo.DecreaseReactionCountById(ctx, commentId, userId)
 	}
-
-	go func() {
-		defer func() {
-			if err := recover(); err != nil {
-				fmt.Printf("Error public message from topic %s\n", common.ReactedCommentTopic)
-			}
-		}()
-
-		commentMessage := pubsub.NewAppMessage(&userId, common.ReactedCommentTopic, map[string]interface{}{
-			"comment_id": commentId,
-			"user_id":    userId,
-		})
-
-		err := u.pubsub.Publish(ctx, commentMessage)
-		if err != nil {
-			panic(err)
-		}
-	}()
 
 	return true, nil
 

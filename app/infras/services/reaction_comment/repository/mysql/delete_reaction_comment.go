@@ -11,6 +11,7 @@ import (
 
 func (m *mySQLStorage) RemoveReactionComment(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error) {
 	db := m.db.GetConnection()
+
 	if err := db.Table(modelreactioncomment.ReactionComment{}.TableName()).
 		Where("comment_id = ? AND user_id = ?", commentId, userId).
 		Delete(&modelreactioncomment.ReactionComment{}).Error; err != nil {

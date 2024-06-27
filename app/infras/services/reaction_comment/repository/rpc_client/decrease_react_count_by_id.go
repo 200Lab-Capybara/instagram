@@ -7,7 +7,7 @@ import (
 	modelreactioncomment "instagram/app/internals/services/reaction_comment/model"
 )
 
-func (repo *getCommentRepo) DecreaseReactCountById(ctx context.Context, commentId uuid.UUID) (bool, error) {
+func (repo *getCommentRepo) DecreaseReactionCountById(ctx context.Context, commentId uuid.UUID, userId uuid.UUID) (bool, error) {
 	if err := repo.db.GetConnection().
 		Table(modelreactioncomment.Comment{}.TableName()).
 		Where("id = ?", commentId).

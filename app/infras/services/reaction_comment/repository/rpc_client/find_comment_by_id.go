@@ -18,7 +18,9 @@ func NewGetCommentRepo(db common.SQLDatabase) *getCommentRepo {
 }
 
 func (repo *getCommentRepo) FindCommentById(ctx context.Context, commentId uuid.UUID) (*modelreactioncomment.Comment, error) {
+
 	var comment modelreactioncomment.Comment
+
 	if err := repo.db.GetConnection().Table(modelreactioncomment.Comment{}.TableName()).
 		Where("id = ?", commentId).First(&comment).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
