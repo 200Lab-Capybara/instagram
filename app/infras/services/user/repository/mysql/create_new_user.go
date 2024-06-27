@@ -7,9 +7,9 @@ import (
 	"instagram/common"
 )
 
-func (m *mySQLStorage) CreateNewUser(ctx context.Context, user *usermodel.User) (*uuid.UUID, error) {
+func (store *mySQLStorage) CreateNewUser(ctx context.Context, user *usermodel.User) (*uuid.UUID, error) {
 
-	db := m.db.GetConnection()
+	db := store.db.GetConnection()
 	if err := db.Table(user.TableName()).Create(user).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}

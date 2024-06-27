@@ -17,7 +17,7 @@ func (hdl *postHandler) CreatePostHandler() gin.HandlerFunc {
 			return
 		}
 
-		id, err := hdl.postUC.Execute(c.Request.Context(), requester, &postDTO)
+		id, err := hdl.createPostUseCase.Execute(c.Request.Context(), requester, &postDTO)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)

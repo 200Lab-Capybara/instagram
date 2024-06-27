@@ -44,6 +44,8 @@ func (status *UserStatus) Scan(value interface{}) error {
 		r = UserInactive
 	} else if statusValue == "banned" {
 		r = UserBanned
+	} else if statusValue == "deleted" {
+		r = UserDeleted
 	}
 
 	*status = r

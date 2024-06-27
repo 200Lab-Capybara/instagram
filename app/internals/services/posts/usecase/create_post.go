@@ -12,24 +12,18 @@ import (
 
 type createPostUseCase struct {
 	postRepository CreatePostRepository
-	pImagesRepo    CreatePostImagesRepository
 	pubsub         pubsub.MessageBroker
 }
 
-func NewCreatePostUseCase(postRepository CreatePostRepository, pImagesRepo CreatePostImagesRepository, pubsub pubsub.MessageBroker) CreatePostUseCase {
+func NewCreatePostUseCase(postRepository CreatePostRepository, pubsub pubsub.MessageBroker) CreatePostUseCase {
 	return &createPostUseCase{
 		postRepository: postRepository,
-		pImagesRepo:    pImagesRepo,
 		pubsub:         pubsub,
 	}
 }
 
 type CreatePostRepository interface {
 	CreatePost(ctx context.Context, post *postsmodel.Post) (*uuid.UUID, error)
-}
-
-type CreatePostImagesRepository interface {
-	CreatePostImages(ctx context.Context, postID uuid.UUID, images []uuid.UUID) error
 }
 
 type CreatePostUseCase interface {
@@ -44,14 +38,6 @@ func (c *createPostUseCase) Execute(ctx context.Context, requester common.Reques
 	hashtags := common.GetHashtag(dto.Content)
 	if len(hashtags) > 0 {
 		usedHashtag = true
-	}
-
-	if len(dto.Images) > 0 {
-		// Create post images
-		err := c.pImagesRepo.CreatePostImages(ctx, postID, dto.Images)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	post := &postsmodel.Post{
@@ -72,12 +58,7 @@ func (c *createPostUseCase) Execute(ctx context.Context, requester common.Reques
 	}
 
 	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				fmt.Printf("Error public message from topic %s", common.CreatedPostTopic)
-			}
-		}()
-
+		common.RecoverPanic(fmt.Sprintf("Error public message from topic %s", common.CreatedPostTopic))
 		postMessage := pubsub.NewAppMessage(&userID, common.CreatedPostTopic, map[string]interface{}{
 			"post_id":  postID,
 			"user_id":  userID,
