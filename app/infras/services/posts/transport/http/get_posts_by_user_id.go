@@ -9,7 +9,7 @@ import (
 
 func (hdl *postHandler) GetListPostByUserIdHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		postId, err := uuid.Parse(c.Param("userId"))
+		postId, err := uuid.Parse(c.Param("id"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
 			return
