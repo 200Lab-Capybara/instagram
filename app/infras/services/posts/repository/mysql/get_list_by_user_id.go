@@ -11,7 +11,9 @@ func (store *mysqlStorage) GetListPostByUserId(ctx context.Context, userId uuid.
 	var data []postsmodel.Post
 	db := store.db.GetConnection()
 
-	if err := db.Select("id").Where("user_id=?", userId).Table(postsmodel.Post{}.TableName()).Count(&paging.Total).Error; err != nil {
+	db = db.Table(postsmodel.Post{}.TableName()).Where("status <> ?", postsmodel.PostDeleted).Where("user_id=?", userId)
+
+	if err := db.Select("id").Count(&paging.Total).Error; err != nil {
 		return nil, err
 	}
 
