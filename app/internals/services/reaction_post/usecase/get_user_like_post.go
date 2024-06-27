@@ -35,6 +35,7 @@ func (uc *getUserLikePostUseCase) Execute(ctx context.Context, userId uuid.UUID,
 	}
 
 	listUserId, err := uc.getUserLikePostRepo.GetUserIdLikePost(ctx, postId)
+	fmt.Println(listUserId)
 	if err != nil {
 		return nil, err
 	}
@@ -53,37 +54,37 @@ func (uc *getUserLikePostUseCase) Execute(ctx context.Context, userId uuid.UUID,
 		userMap[userInfo.ID] = userInfo
 	}
 
-	listInfoUserLikePost := make([]common.SimpleUser, len(listUserId))
-
-	for i, userId := range listUserId {
-
-		listInfoUserLikePost[i] = common.SimpleUser{
-			UserId:    userMap[userId].ID,
-			FirstName: userMap[userId].FirstName,
-			LastName:  userMap[userId].LastName,
-		}
-
-	}
-
 	listUserIdFollwing, err := uc.getListFollwingRepo.GetListFollwingByUserId(ctx, userId)
-
-	fmt.Println(listUserIdFollwing)
-
-	listFollwingMap := make(map[uuid.UUID]bool)
-
+	listFollowingMap := make(map[uuid.UUID]bool)
 	for _, userIdFoolwing := range listUserIdFollwing {
-		listFollwingMap[userIdFoolwing] = true
+		listFollowingMap[userIdFoolwing] = true
 	}
 
-	listUserLikePost := make([]reactionpostmodel.UserReactionPost, len(listUserIdFollwing))
+	listUserLikePost := make([]reactionpostmodel.UserReactionPost, len(listUserId))
 
-	for i, _ := range listUserIdFollwing {
-		if listFollwingMap[listInfoUserLikePost[i].UserId] {
-			listUserLikePost[i] = reactionpostmodel.UserReactionPost{
-				SimpleUser: listInfoUserLikePost[i],
-				Followed:   true,
-			}
+	for i, id := range listUserId {
+		simpleUser := common.SimpleUser{
+			UserId:    userMap[id].ID,
+			FirstName: userMap[id].FirstName,
+			LastName:  userMap[id].LastName,
+			Follower:  userMap[id].Follower,
+			Following: userMap[id].Following,
 		}
+
+		followed := false
+		if userId == id {
+			followed = true
+		} else {
+			followed = listFollowingMap[id]
+		}
+
+		data := reactionpostmodel.UserReactionPost{
+			SimpleUser: simpleUser,
+			Followed:   followed,
+		}
+
+		listUserLikePost[i] = data
+
 	}
 
 	return listUserLikePost, nil
