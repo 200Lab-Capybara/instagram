@@ -8,12 +8,14 @@ import (
 type postHandler struct {
 	createPostUseCase postusecase.CreatePostUseCase
 	getPostsByUserId  postusecase.GetListPostByUserIdUseCase
+	getFeedUC         postusecase.GetFeedUseCase
 }
 
-func NewPostHandler(postUC postusecase.CreatePostUseCase, getPostsByUserId postusecase.GetListPostByUserIdUseCase) *postHandler {
+func NewPostHandler(postUC postusecase.CreatePostUseCase, getPostsByUserId postusecase.GetListPostByUserIdUseCase, getFeedUC postusecase.GetFeedUseCase) *postHandler {
 	return &postHandler{
 		createPostUseCase: postUC,
 		getPostsByUserId:  getPostsByUserId,
+		getFeedUC:         getFeedUC,
 	}
 }
 

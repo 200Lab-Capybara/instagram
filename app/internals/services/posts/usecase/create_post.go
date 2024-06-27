@@ -58,12 +58,7 @@ func (c *createPostUseCase) Execute(ctx context.Context, requester common.Reques
 	}
 
 	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				fmt.Printf("Error public message from topic %s", common.CreatedPostTopic)
-			}
-		}()
-
+		common.RecoverPanic(fmt.Sprintf("Error public message from topic %s", common.CreatedPostTopic))
 		postMessage := pubsub.NewAppMessage(&userID, common.CreatedPostTopic, map[string]interface{}{
 			"post_id":  postID,
 			"user_id":  userID,

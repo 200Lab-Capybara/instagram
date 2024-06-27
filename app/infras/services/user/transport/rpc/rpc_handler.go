@@ -9,11 +9,15 @@ import (
 
 type userRpcService struct {
 	pb.UnimplementedUserServiceServer
-	getUserByIdUC userusecase.GetUserByIdUseCase
+	getUserByIdUC  userusecase.GetUserByIdUseCase
+	getUserByIdsUC userusecase.GetUserByIdsUseCase
 }
 
-func NewUserRpcHandler(getUserByIdUC userusecase.GetUserByIdUseCase) *userRpcService {
-	return &userRpcService{getUserByIdUC: getUserByIdUC}
+func NewUserRpcHandler(getUserByIdUC userusecase.GetUserByIdUseCase, getUserByIdsUC userusecase.GetUserByIdsUseCase) *userRpcService {
+	return &userRpcService{
+		getUserByIdUC:  getUserByIdUC,
+		getUserByIdsUC: getUserByIdsUC,
+	}
 }
 
 func (rpc *userRpcService) GetUserById(ctx context.Context, dto *pb.GetUserByIdReq) (*pb.PublicUserInfoResp, error) {
@@ -35,4 +39,34 @@ func (rpc *userRpcService) GetUserById(ctx context.Context, dto *pb.GetUserByIdR
 			UpdatedAt: user.UpdatedAt.String(),
 		},
 	}, nil
+}
+
+func (rpc *userRpcService) GetUserByIds(ctx context.Context, dto *pb.GetUserByIdsReq) (*pb.PublicUsersInfosResp, error) {
+	ids := make([]uuid.UUID, len(dto.Ids))
+	// Convert string ids to uuid
+	for i, id := range dto.Ids {
+		ids[i] = uuid.MustParse(id)
+	}
+
+	users, err := rpc.getUserByIdsUC.Execute(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	publicUsersInfo := make([]*pb.PublicUserInfo, len(users))
+
+	for i, user := range users {
+		publicUsersInfo[i] = &pb.PublicUserInfo{
+			Id:        user.ID.String(),
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role.String(),
+			Status:    user.Status.String(),
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt.String(),
+			UpdatedAt: user.UpdatedAt.String(),
+		}
+	}
+
+	return &pb.PublicUsersInfosResp{Users: publicUsersInfo}, nil
 }

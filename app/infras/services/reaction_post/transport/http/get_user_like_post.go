@@ -20,7 +20,6 @@ func (hdl *reactionPostHandler) GetUserLikePostHandler() gin.HandlerFunc {
 		}
 
 		result, err := hdl.getUserLikePostUC.Execute(c.Request.Context(), userId, postId)
-
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return

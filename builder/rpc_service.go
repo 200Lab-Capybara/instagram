@@ -7,7 +7,6 @@ import (
 	usermysql "instagram/app/infras/services/user/repository/mysql"
 	userrpc "instagram/app/infras/services/user/transport/rpc"
 	userusecase "instagram/app/internals/services/user/usecase"
-	"instagram/common"
 	pb "instagram/proto"
 	"log"
 	"net"
@@ -19,7 +18,7 @@ var (
 	rpcPort = os.Getenv("RPC_PORT")
 )
 
-func BuildRpcService(con common.SQLDatabase) {
+func BuildRpcService(ctxSvr ServiceContext) {
 	rpcPort, err := strconv.Atoi(rpcPort)
 	if err != nil {
 		log.Fatal(err)
@@ -33,9 +32,10 @@ func BuildRpcService(con common.SQLDatabase) {
 	fmt.Println(fmt.Sprintf("GRPC Server is listening on %d ...", rpcPort))
 	s := grpc.NewServer()
 
-	userStorage := usermysql.NewMySQLStorage(con)
+	userStorage := usermysql.NewMySQLStorage(ctxSvr.GetDB())
 	findUserByIdUC := userusecase.NewGetUserByIdUseCase(userStorage)
-	pb.RegisterUserServiceServer(s, userrpc.NewUserRpcHandler(findUserByIdUC))
+	findUsersByIdsUC := userusecase.NewGetUserByIdsUseCase(userStorage)
+	pb.RegisterUserServiceServer(s, userrpc.NewUserRpcHandler(findUserByIdUC, findUsersByIdsUC))
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalln(err)
