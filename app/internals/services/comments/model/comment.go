@@ -1,15 +1,27 @@
 package modelcomment
 
-import "time"
+import (
+	"errors"
+	"github.com/google/uuid"
+	"time"
+)
+
+var (
+	ErrPostNotFound = errors.New("post not found")
+)
 
 type Comment struct {
-	Id         string    `json:"id" gorm:"column:id"`
+	Id         uuid.UUID `json:"id" gorm:"column:id"`
 	CreatedAt  time.Time `json:"created_at" gorm:"column:created_at"`
 	UpdatedAt  time.Time `json:"updated_at" gorm:"column:updated_at"`
 	Content    string    `json:"content" gorm:"column:content"`
-	UserId     string    `json:"user_id" gorm:"column:user_id"`
-	PostId     string    `json:"post_id" gorm:"column:post_id"`
+	UserId     uuid.UUID `json:"user_id" gorm:"column:user_id"`
+	PostId     uuid.UUID `json:"post_id" gorm:"column:post_id"`
 	ReactCount int       `json:"react_count" gorm:"column:react_count"`
+}
+
+type Post struct {
+	PostId uuid.UUID `json:"post_id"`
 }
 
 func (Comment) TableName() string { return "comments" }
