@@ -2,6 +2,7 @@ package reactionpostusecase
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	reactionpostmodel "instagram/app/internals/services/reaction_post/model"
 	usermodel "instagram/app/internals/services/user/model"
@@ -12,17 +13,19 @@ type getUserLikePostUseCase struct {
 	getUserLikePostRepo GetUserLikePostRepo
 	postRepository      GetPostRepository
 	getUserInfoRepo     GetUserInfoRepo
+	getListFollwingRepo GetListFollwingRepo
 }
 
-func GetUserLikePostUC(getUserLikePostRepo GetUserLikePostRepo, postRepository GetPostRepository, getUserInfoRepo GetUserInfoRepo) GetUserLikePostUseCase {
+func GetUserLikePostUC(getUserLikePostRepo GetUserLikePostRepo, postRepository GetPostRepository, getUserInfoRepo GetUserInfoRepo, getListFollwingRepo GetListFollwingRepo) GetUserLikePostUseCase {
 	return &getUserLikePostUseCase{
 		getUserLikePostRepo: getUserLikePostRepo,
 		postRepository:      postRepository,
 		getUserInfoRepo:     getUserInfoRepo,
+		getListFollwingRepo: getListFollwingRepo,
 	}
 }
 
-func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID) ([]common.SimpleUser, error) {
+func (uc *getUserLikePostUseCase) Execute(ctx context.Context, userId uuid.UUID, postId uuid.UUID) ([]reactionpostmodel.UserReactionPost, error) {
 	post, err := uc.postRepository.FindById(ctx, postId)
 	if err != nil {
 		return nil, err
@@ -50,11 +53,11 @@ func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID)
 		userMap[userInfo.ID] = userInfo
 	}
 
-	listUserLikePost := make([]common.SimpleUser, len(listUserId))
+	listInfoUserLikePost := make([]common.SimpleUser, len(listUserId))
 
 	for i, userId := range listUserId {
 
-		listUserLikePost[i] = common.SimpleUser{
+		listInfoUserLikePost[i] = common.SimpleUser{
 			UserId:    userMap[userId].ID,
 			FirstName: userMap[userId].FirstName,
 			LastName:  userMap[userId].LastName,
@@ -62,11 +65,32 @@ func (uc *getUserLikePostUseCase) Execute(ctx context.Context, postId uuid.UUID)
 
 	}
 
+	listUserIdFollwing, err := uc.getListFollwingRepo.GetListFollwingByUserId(ctx, userId)
+
+	fmt.Println(listUserIdFollwing)
+
+	listFollwingMap := make(map[uuid.UUID]bool)
+
+	for _, userIdFoolwing := range listUserIdFollwing {
+		listFollwingMap[userIdFoolwing] = true
+	}
+
+	listUserLikePost := make([]reactionpostmodel.UserReactionPost, len(listUserIdFollwing))
+
+	for i, _ := range listUserIdFollwing {
+		if listFollwingMap[listInfoUserLikePost[i].UserId] {
+			listUserLikePost[i] = reactionpostmodel.UserReactionPost{
+				SimpleUser: listInfoUserLikePost[i],
+				Followed:   true,
+			}
+		}
+	}
+
 	return listUserLikePost, nil
 }
 
 type GetUserLikePostUseCase interface {
-	Execute(ctx context.Context, post_id uuid.UUID) ([]common.SimpleUser, error)
+	Execute(ctx context.Context, userId uuid.UUID, postId uuid.UUID) ([]reactionpostmodel.UserReactionPost, error)
 }
 
 type GetUserLikePostRepo interface {
@@ -75,4 +99,8 @@ type GetUserLikePostRepo interface {
 
 type GetUserInfoRepo interface {
 	GetUserInfoById(ctx context.Context, listUserId []uuid.UUID) ([]usermodel.User, error)
+}
+
+type GetListFollwingRepo interface {
+	GetListFollwingByUserId(ctx context.Context, userId uuid.UUID) ([]uuid.UUID, error)
 }
