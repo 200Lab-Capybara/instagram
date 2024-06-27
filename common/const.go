@@ -9,3 +9,14 @@ const (
 	ReactedPostLike   = "like"
 	ReactedPostUnlike = "unlike"
 )
+const (
+	CreatedStoryTopic = "created_story"
+	ReactedStoryTopic = "reacted_story"
+)
+const (
+	CreatedImageTopic = "created_image"
+)
+const (
+	CreateStoryImage = "story"
+	CreatePostImage  = "post"
+)
