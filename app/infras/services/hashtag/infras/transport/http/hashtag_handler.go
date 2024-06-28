@@ -6,10 +6,11 @@ import (
 )
 
 type hashtagHandler struct {
-	uc hashtagusercase.AddingHashTagUseCase
+	//uc hashtagusercase.AddingHashTagUseCase
+	uc hashtagusercase.CreatingHashTagPostUseCase
 }
 
-func NewHashTagHandler(uc hashtagusercase.AddingHashTagUseCase) *hashtagHandler {
+func NewHashTagHandler(uc hashtagusercase.CreatingHashTagPostUseCase) *hashtagHandler {
 	return &hashtagHandler{uc: uc}
 }
 

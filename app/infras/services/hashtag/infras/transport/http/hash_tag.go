@@ -10,7 +10,7 @@ import (
 func (hdl *hashtagHandler) HashTagHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		postId := common.Post1UUID
-		hashtagStrings := []string{"1", "2", "3"}
+		hashtagStrings := []string{"4", "9"}
 
 		success, err := hdl.uc.Execute(c.Request.Context(), postId, hashtagStrings)
 
@@ -18,6 +18,7 @@ func (hdl *hashtagHandler) HashTagHandler() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
 		}
+
 		if !success {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Failed to react to the post"})
 			return
