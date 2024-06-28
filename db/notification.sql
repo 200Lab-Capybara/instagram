@@ -8,6 +8,7 @@ CREATE TABLE `notifications` (
      `payload` json DEFAULT NULL,
      `status` enum('read','sent','created') NOT NULL,
      `updated_at` datetime(6) DEFAULT NULL,
+     `text` varchar(200) NOT NULL,
      PRIMARY KEY (`id`),
      KEY `user_id` (`user_id`) USING BTREE,
      KEY `notifications_created_at_idx` (`created_at`) USING BTREE
