@@ -9,4 +9,8 @@ type mysqlStorage struct {
 	db common.SQLDatabase
 }
 
-func NewMySQLStorage(db common.SQLDatabase) *mysqlStorage { return &mysqlStorage{db: db} }
+func NewMySQLStorage(db common.SQLDatabase) *mysqlStorage {
+	return &mysqlStorage{
+		db: db,
+	}
+}

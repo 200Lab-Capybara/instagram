@@ -15,6 +15,6 @@ func NewCommentHandler(createCommentUC usecasecomment.CreateCommentUseCae) *comm
 	}
 }
 
-func (hdl *commentHandler) RegisterV1Router(v1 *gin.RouterGroup, middleware gin.HandlerFunc) {
-	v1.POST("/comment/:post_id", hdl.CreateCommentHandler())
+func (hdl *commentHandler) CommentV1Router(v1 *gin.RouterGroup, middleware gin.HandlerFunc) {
+	v1.POST("/posts/:id/comment", middleware, hdl.CreateCommentHandler())
 }

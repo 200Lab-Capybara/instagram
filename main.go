@@ -65,6 +65,7 @@ func main() {
 	builder.BuildReactStoryService(con, v1)
 	builder.BuildProfileService(con, v1)
 	builder.BuildFollowService(serviceContext, authMiddleware)
+	builder.BuildCommentService(con, v1, authMiddleware)
 
 	// NOTE: This is a simple internal service route
 	// NOTE: internal/v1/...

@@ -21,7 +21,9 @@ type Comment struct {
 }
 
 type Post struct {
-	PostId uuid.UUID `json:"post_id"`
+	Id uuid.UUID `json:"post_id"`
 }
 
 func (Comment) TableName() string { return "comments" }
+
+func (Post) TableName() string { return "posts" }

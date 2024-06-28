@@ -17,14 +17,14 @@ func NewGetPostRepo(db common.SQLDatabase) *getPostRepo {
 	return &getPostRepo{db: db}
 }
 
-func (repo *getPostRepo) CheckExistPostById(ctx context.Context, pid uuid.UUID) (*modelcomment.Post, error) {
+func (repo *getPostRepo) CheckExistPostById(ctx context.Context, pid uuid.UUID) (bool, error) {
 	var post modelcomment.Post
 
-	if err := repo.db.GetConnection().Table(modelcomment.Comment{}.TableName()).Where("post_id = ?", pid).First(&post).Error; err != nil {
+	if err := repo.db.GetConnection().Table(modelcomment.Post{}.TableName()).Where("id = ?", pid).First(&post).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, modelcomment.ErrPostNotFound
+			return false, modelcomment.ErrPostNotFound
 		}
-		return nil, common.ErrDB(err)
+		return false, common.ErrDB(err)
 	}
-	return &post, nil
+	return true, nil
 }

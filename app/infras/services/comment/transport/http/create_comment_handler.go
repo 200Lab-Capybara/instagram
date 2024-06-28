@@ -12,7 +12,7 @@ func (hdl *commentHandler) CreateCommentHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		dto := modelcomment.CommentCreation{}
 		requester := c.MustGet(common.RequesterKey).(common.Requester)
-		postId := c.Param("post_id")
+		postId := c.Param("id")
 		pId, err := uuid.Parse(postId)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
@@ -26,12 +26,13 @@ func (hdl *commentHandler) CreateCommentHandler() gin.HandlerFunc {
 
 		dto.PostId = pId
 
-		_, err = hdl.createCommentUC.Execute(c.Request.Context(), requester, dto)
+		id, err := hdl.createCommentUC.Execute(c.Request.Context(), requester, dto)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(id))
+
 	}
 }
