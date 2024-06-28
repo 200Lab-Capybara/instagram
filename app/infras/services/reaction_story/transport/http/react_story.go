@@ -19,7 +19,7 @@ func (hdl *reactionStoryHandler) ReactStoryHandler() gin.HandlerFunc {
 			return
 		}
 
-		_, err = hdl.uc.Execute(c.Request.Context(), storyId, requester)
+		_, err = hdl.reactionStoryUseCase.Execute(c.Request.Context(), storyId, requester)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

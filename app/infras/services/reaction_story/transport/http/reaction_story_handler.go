@@ -6,11 +6,11 @@ import (
 )
 
 type reactionStoryHandler struct {
-	uc reactionstoryusecase.ReactionStoryUseCase
+	reactionStoryUseCase reactionstoryusecase.ReactionStoryUseCase
 }
 
 func NewReactionStoryHandler(uc reactionstoryusecase.ReactionStoryUseCase) *reactionStoryHandler {
-	return &reactionStoryHandler{uc: uc}
+	return &reactionStoryHandler{reactionStoryUseCase: uc}
 }
 
 func (hdl *reactionStoryHandler) RegisterV1Router(r *gin.RouterGroup, middleware gin.HandlerFunc) {
