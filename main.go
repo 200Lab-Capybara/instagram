@@ -24,7 +24,7 @@ var (
 	connectionString = os.Getenv("CONNECTION_STRING")
 	//"capybara:my_secret@tcp(localhost:3306)/users?parseTime=true"
 	natsConnectionString = os.Getenv("NATS_CONNECTION_STRING")
-	//	nats://localhost:4222
+	//	nats://localhost:4222.
 )
 
 func main() {
