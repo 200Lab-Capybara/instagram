@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/nats-io/nats.go"
@@ -16,6 +17,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 var (
@@ -31,6 +33,15 @@ func main() {
 	r := gin.Default()
 	logger := logruslogger.NewLogrusLogger()
 	logger.Info("Starting the server.....")
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE", "OPTIONS", "HEAD"},
+		AllowHeaders:     []string{"Origin, X-Requested-With, Content-Type, Accept, Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	v1 := r.Group("/v1")
 	v1Internal := r.Group("/internal/v1/rpc")
