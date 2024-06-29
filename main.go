@@ -59,6 +59,7 @@ func main() {
 	userStorage := usermysql.NewMySQLStorage(con)
 	authMiddleware := middleware.RequiredAuth(userStorage, accessTokenProvider)
 
+
 	builder.BuildUserService(serviceContext, accessTokenProvider, authMiddleware)
 	builder.BuildReactPostService(con, natsCon, v1, authMiddleware)
 	builder.BuildPostService(serviceContext, authMiddleware)
