@@ -1,15 +1,15 @@
-create table images
+CREATE TABLE `images`
 (
-    id           varchar(36)             not null
-        primary key,
-    image_url    varchar(255)            not null,
-    size         int                     not null,
-    width        int                     not null,
-    height       int                     not null,
-    status       enum ('used', 'unused') not null,
-    create_at    datetime(6)             not null,
-    updated_at   datetime(6)             null,
-    storage_name varchar(255)            not null,
-    user_id      varchar(36)             not null
-);
-
+    `id`           varchar(36)  NOT NULL,
+    `image_url`    varchar(255) NOT NULL,
+    `size`         int          NOT NULL,
+    `width`        int          NOT NULL,
+    `height`       int          NOT NULL,
+    `status`       enum('used','unused') NOT NULL,
+    `create_at`    datetime(6) NOT NULL,
+    `updated_at`   datetime(6) DEFAULT NULL,
+    `storage_name` varchar(255) NOT NULL,
+    `user_id`      varchar(36)  NOT NULL,
+    `extension`    varchar(36)  NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
