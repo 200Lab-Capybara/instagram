@@ -26,6 +26,7 @@ import (
 //		return hashtags, nil // Return the slice containing all hashtags and nil error if successful
 //	}
 func (m *mySQLStorage) GetHashTags(ctx context.Context, hashtagSlice []string) ([]*hashtagmodel.Hashtag, error) {
+	var hashtag hashtagmodel.Hashtag
 	var hashtags []*hashtagmodel.Hashtag // Slice to hold hashtags from the database
 
 	// Check if the input slice is empty to prevent an invalid SQL query
@@ -34,7 +35,7 @@ func (m *mySQLStorage) GetHashTags(ctx context.Context, hashtagSlice []string) (
 	}
 
 	// Executes a query to fetch records from the 'hashtags' table that are in the hashtagSlice
-	if err := m.db.GetConnection().Table("hashtags").Where("Hashtag IN ?", hashtagSlice).Find(&hashtags).Error; err != nil {
+	if err := m.db.GetConnection().Table(hashtag.TableName()).Where("Hashtag IN ?", hashtagSlice).Find(&hashtags).Error; err != nil {
 		return nil, err // Return nil and the error if the query fails
 	}
 
