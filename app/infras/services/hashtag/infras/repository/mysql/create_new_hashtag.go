@@ -16,8 +16,9 @@ import (
 //}
 
 func (m *mySQLStorage) CreateHashTag(ctx context.Context, newHashTag hashtagmodel.Hashtag) (bool, error) {
+	var data hashtagmodel.Hashtag
 	db := m.db.GetConnection()
-	if err := db.Table(hashtagmodel.Hashtag{}.TableName()).Create(&newHashTag).Error; err != nil {
+	if err := db.Table(data.TableName()).Create(&newHashTag).Error; err != nil {
 		return false, err
 	}
 	return true, nil
