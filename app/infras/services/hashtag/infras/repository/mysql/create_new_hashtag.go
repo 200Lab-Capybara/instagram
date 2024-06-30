@@ -3,6 +3,7 @@ package hashtagsql
 import (
 	"context"
 	hashtagmodel "instagram/app/internals/services/hashtag/model"
+	"instagram/common"
 )
 
 //type mySQLStorage struct {
@@ -19,7 +20,7 @@ func (m *mySQLStorage) CreateHashTag(ctx context.Context, newHashTag hashtagmode
 	var data hashtagmodel.Hashtag
 	db := m.db.GetConnection()
 	if err := db.Table(data.TableName()).Create(&newHashTag).Error; err != nil {
-		return false, err
+		return false, common.ErrDB(err)
 	}
 	return true, nil
 }

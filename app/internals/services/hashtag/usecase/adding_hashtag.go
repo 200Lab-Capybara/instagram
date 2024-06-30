@@ -38,12 +38,20 @@ func (u *creatingHashTagPostUseCase) Execute(ctx context.Context, postId uuid.UU
 
 	hashtagFormat := hashtagmodel.Hashtag{}
 	validNullHashtagsString, err := hashtagFormat.HashTagFormat(ctx, hashtags)
-
 	if err != nil {
 		return false, err
 	}
+
 	existedHashtags, err := u.creatingHashTagRepository.GetHashTags(ctx, validNullHashtagsString)
+	if err != nil {
+		return false, err
+
+	}
+
 	validNullHashtag, err := hashtagFormat.HashTagConvert(ctx, validNullHashtagsString)
+	if err != nil {
+		return false, err
+	}
 	hashtagsStatusMap := make(map[string]bool)
 
 	for _, hashtagString := range hashtags {
@@ -55,12 +63,6 @@ func (u *creatingHashTagPostUseCase) Execute(ctx context.Context, postId uuid.UU
 			hashtagsStatusMap[hashtag.Hashtag] = true
 		}
 	}
-
-	//fmt.Println("Hashtag Status Map:")
-	//for _, hashtag := range existedHashtags {
-	//	//fmt.Printf(strconv.Itoa(hashtag))
-	//	fmt.Println(hashtag.ID)
-	//}
 
 	fmt.Println("Hashtag Status Map:")
 	for hashtag, status := range hashtagsStatusMap {
@@ -82,15 +84,6 @@ func (u *creatingHashTagPostUseCase) Execute(ctx context.Context, postId uuid.UU
 			}
 			hashtagsStatusMap[newHashTag.Hashtag] = true
 		}
-
 	}
-
-	//for _, hashtag := range validNullHashtag {
-	//	_, err := u.creatingHashTagPostRepository.MapHashTag(ctx, postId, hashtagmodel.Hashtag{ID: hashtag.ID, Hashtag: hashtag.Hashtag, CreatedAt: time.Now().UTC()})
-	//	if err != nil {
-	//		return false, err
-	//	}
-	//}
-
 	return true, nil
 }
