@@ -5,17 +5,17 @@ const (
 	ReactedPostTopic  = "reacted_post"
 	FollowedUserTopic = "followed_user"
 	UnfollowUserTopic = "unfollow_user"
+  CreateCommentTopic  = "create_comment"
+	ReactedCommentTopic = "reacted_comment"
+  CreatedStoryTopic = "created_story"
+	ReactedStoryTopic = "reacted_story"
 )
 
 const (
 	ReactedPostLike   = "like"
 	ReactedPostUnlike = "unlike"
-)
-const (
-	CreatedStoryTopic = "created_story"
-	ReactedStoryTopic = "reacted_story"
-)
-const (
-	ReactedStoryLike   = "like"
+  ReactedCommentLike   = "like"
+	ReactedCommentUnlike = "unlike"
+  ReactedStoryLike   = "like"
 	ReactedStoryUnlike = "unlike"
 )
