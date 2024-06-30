@@ -24,14 +24,20 @@ func NewCreateStoryUC(createstory CreateStoryRepo, pubsub pubsub.MessageBroker) 
 
 func (uc createStoryUC) Execute(ctx context.Context, requester common.Requester, dto model.CreateStory) (*uuid.UUID, error) {
 	userId := requester.UserId()
-	storyId, _ := uuid.NewV7()
-	imageId, _ := uuid.NewV7()
+	storyId, err := uuid.NewV7()
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate storyId: %w", err)
+	}
+	imageId, err := uuid.NewV7()
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate imageId: %w", err)
+	}
 
 	story := &model.Story{
 		Id:      storyId,
 		UserId:  userId,
 		Content: dto.Content,
-		Image: model.ImageStory{
+		Image: common.Image{
 			Id:          imageId,
 			UserId:      userId,
 			ImageUrl:    dto.ImageUrl,
@@ -43,7 +49,7 @@ func (uc createStoryUC) Execute(ctx context.Context, requester common.Requester,
 			UpdatedAt:   time.Now().UTC(),
 			StorageName: dto.Storage,
 		},
-		Count:       0,
+		ReactCount:  0,
 		IsActive:    true,
 		ExpiresTime: 24,
 		CreatedAt:   time.Now().UTC(),
