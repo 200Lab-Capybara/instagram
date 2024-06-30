@@ -12,13 +12,14 @@ import (
 func (hdl *reactionPostHandler) GetUserLikePostHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		postId, err := uuid.Parse(c.Param("id"))
+		userId := c.MustGet(common.RequesterKey).(common.Requester).UserId()
+
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid post ID"})
 			return
 		}
 
-		result, err := hdl.getUserLikePostUC.Execute(c.Request.Context(), postId)
-
+		result, err := hdl.getUserLikePostUC.Execute(c.Request.Context(), userId, postId)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return

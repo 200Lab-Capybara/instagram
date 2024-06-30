@@ -3,6 +3,7 @@ package reactionpostmodel
 import (
 	"errors"
 	"github.com/google/uuid"
+	"instagram/common"
 	"time"
 )
 
@@ -20,6 +21,11 @@ type ReactionPost struct {
 type Post struct {
 	ID     uuid.UUID
 	Status string
+}
+
+type UserReactionPost struct {
+	common.SimpleUser
+	Followed bool `json:"followed"`
 }
 
 func (ReactionPost) TableName() string {
