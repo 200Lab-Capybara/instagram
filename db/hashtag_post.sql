@@ -1,4 +1,4 @@
-CREATE TABLE `hashtag_post` (
+CREATE TABLE `hashtag_posts` (
   `hashtag_id` varchar(36) NOT NULL,
   `post_id` varchar(36) NOT NULL,
   `created_at` datetime(6) NULL DEFAULT NULL,

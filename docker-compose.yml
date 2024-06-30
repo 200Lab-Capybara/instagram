@@ -12,7 +12,30 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysqlprofile
+
+  nats:
+    image: nats
+    ports:
+      - "8222:8222"
+      - "4222:4222"
+    command: "--cluster_name NATS --cluster natspubsub://0.0.0.0:6222 --http_port 8222 "
+    networks:
+      - nats
+  nats-1:
+    image: nats
+    command: "--cluster_name NATS --cluster natspubsub://0.0.0.0:6222 --routes=natspubsub://ruser:T0pS3cr3t@natspubsub:6222"
+    networks:
+        - nats
+    depends_on:
+      - nats
+  nats-2:
+    image: nats
+    command: "--cluster_name NATS --cluster natspubsub://0.0.0.0:6222 --routes=natspubsub://ruser:T0pS3cr3t@natspubsub:6222"
+    networks:
+        - nats
+    depends_on:
+      - nats
 
   # redis:
   #   image: redis:latest
@@ -24,9 +47,14 @@ services:
   #   volumes:
   #     - redis_data:/data
   #   command: /bin/sh -c 'redis-server --appendonly yes --requirepass $${REDIS_PASSWORD}'
+networks:
+    nats:
+      driver: bridge
 
 volumes:
   # redis_data:
   #   driver: local
   mysql_data:
     driver: local
+
+
