@@ -3,7 +3,6 @@ package postusecase
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/google/uuid"
 	postsmodel "instagram/app/internals/services/posts/model"
 	"instagram/common"
@@ -36,8 +35,6 @@ func (i *increaseLikeCountUseCase) Execute(ctx context.Context, postID uuid.UUID
 		}
 		return false, common.ErrInvalidRequest(err)
 	}
-
-	fmt.Println(post)
 
 	if post == nil {
 		return false, postsmodel.ErrPostNotFound

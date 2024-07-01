@@ -6,13 +6,13 @@ import (
 )
 
 type reactionStoryHandler struct {
-	uc reactionstoryusecase.InsertReactionStoryUserCase
+	reactionStoryUseCase reactionstoryusecase.ReactionStoryUseCase
 }
 
-func NewReactionStoryHandler(uc reactionstoryusecase.InsertReactionStoryUserCase) *reactionStoryHandler {
-	return &reactionStoryHandler{uc: uc}
+func NewReactionStoryHandler(uc reactionstoryusecase.ReactionStoryUseCase) *reactionStoryHandler {
+	return &reactionStoryHandler{reactionStoryUseCase: uc}
 }
 
-func (hdl *reactionStoryHandler) RegisterV1Router(r *gin.RouterGroup) {
-	r.POST("/story/:id/reaction", hdl.ReactStoryHandler())
+func (hdl *reactionStoryHandler) RegisterV1Router(r *gin.RouterGroup, middleware gin.HandlerFunc) {
+	r.POST("/story/:id/reaction", middleware, hdl.ReactStoryHandler())
 }

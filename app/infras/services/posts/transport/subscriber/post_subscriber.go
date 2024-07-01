@@ -61,4 +61,5 @@ func (sbr *postSubscriber) Init() {
 
 		}
 	}()
+
 }
