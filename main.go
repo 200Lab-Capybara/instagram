@@ -75,6 +75,7 @@ func main() {
 	builder.BuildReactPostService(con, natsCon, v1, authMiddleware)
 	builder.BuildPostService(serviceContext, authMiddleware)
 	builder.BuildReactStoryService(con, v1)
+	builder.BuildStoryService(con, v1, natsCon, authMiddleware)
 	builder.BuildReactCommentService(con, v1)
 	builder.BuildProfileService(con, v1)
 	builder.BuildFollowService(serviceContext, authMiddleware)
