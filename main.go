@@ -70,15 +70,15 @@ func main() {
 	userStorage := usermysql.NewMySQLStorage(con)
 	authMiddleware := middleware.RequiredAuth(userStorage, accessTokenProvider)
 
-
 	builder.BuildUserService(serviceContext, accessTokenProvider, authMiddleware)
 	builder.BuildReactPostService(con, natsCon, v1, authMiddleware)
 	builder.BuildPostService(serviceContext, authMiddleware)
-	builder.BuildReactStoryService(con, v1)
+	builder.BuildReactStoryService(con, natsCon, v1, authMiddleware)
 	builder.BuildStoryService(con, v1, natsCon, authMiddleware)
 	builder.BuildReactCommentService(con, v1)
 	builder.BuildProfileService(con, v1)
 	builder.BuildFollowService(serviceContext, authMiddleware)
+	builder.BuildHashTagService(con, v1)
 
 	// NOTE: This is a simple internal service route
 	// NOTE: internal/v1/...

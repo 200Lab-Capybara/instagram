@@ -8,5 +8,5 @@ docker-compose up
 
 - Sau đó chạy project bằng lệnh
 ```shell
-CONNECTION_STRING=capybara:my_secret@tcp(localhost:3306)/users?parseTime=true PORT=:8001 go run .
+CONNECTION_STRING=capybara:my_secret@tcp(localhost:3306)/instagram?parseTime=true PORT=:8001 go run .
 ```
