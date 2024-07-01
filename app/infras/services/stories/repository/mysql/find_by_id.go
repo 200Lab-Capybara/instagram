@@ -9,12 +9,12 @@ import (
 	"instagram/common"
 )
 
-func (storage *mysqlStorage) GetById(ctx context.Context, storyId uuid.UUID) (*model.Story, error) {
-	story := model.Story{}
+func (storage *mysqlStorage) GetById(ctx context.Context, storyId uuid.UUID) (*storiesmodel.Story, error) {
+	story := storiesmodel.Story{}
 	err := storage.db.GetConnection().WithContext(ctx).Where("id = ?", storyId).First(&story).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.ErrStoryNotFound
+			return nil, storiesmodel.ErrStoryNotFound
 		}
 
 		return nil, common.ErrDB(err)

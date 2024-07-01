@@ -1,11 +1,12 @@
-package usecase
+package storyusecase
 
 import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"instagram/app/internals/services/stories/model"
+	"instagram/app/internals/services/reaction_story/model"
+	storiesmodel "instagram/app/internals/services/stories/model"
 	"instagram/common"
 )
 
@@ -38,6 +39,6 @@ type IncreaseLikeCountUseCase interface {
 	Execute(ctx context.Context, storyId uuid.UUID) (bool, error)
 }
 type IncreaseLikeCountRepo interface {
-	GetById(ctx context.Context, storyId uuid.UUID) (*model.Story, error)
+	GetById(ctx context.Context, storyId uuid.UUID) (*storiesmodel.Story, error)
 	IncreaseLikeCount(ctx context.Context, storyId uuid.UUID) (bool, error)
 }

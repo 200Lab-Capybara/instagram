@@ -10,7 +10,7 @@ import (
 
 func (storage *mysqlStorage) DecreaseLikeCount(ctx context.Context, storyId uuid.UUID) (bool, error) {
 	db := storage.db.GetConnection()
-	err := db.Table(model.Story{}.TableName()).Where("id = ?", storyId).Update("like_count", gorm.Expr("like_count - ?", 1)).Error
+	err := db.Table(storiesmodel.Story{}.TableName()).Where("id = ?", storyId).Update("like_count", gorm.Expr("like_count - ?", 1)).Error
 	if err != nil {
 		return false, common.ErrDB(err)
 	}

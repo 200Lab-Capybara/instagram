@@ -11,11 +11,11 @@ import (
 
 type storySubscriber struct {
 	pubsub       pubsub.MessageBroker
-	increaselike usecase.IncreaseLikeCountUseCase
-	decreaselike usecase.DecreaseLikeCountUseCase
+	increaselike storyusecase.IncreaseLikeCountUseCase
+	decreaselike storyusecase.DecreaseLikeCountUseCase
 }
 
-func NewStorySubscriber(ps pubsub.MessageBroker, increase usecase.IncreaseLikeCountUseCase, decrease usecase.DecreaseLikeCountUseCase) *storySubscriber {
+func NewStorySubscriber(ps pubsub.MessageBroker, increase storyusecase.IncreaseLikeCountUseCase, decrease storyusecase.DecreaseLikeCountUseCase) *storySubscriber {
 	return &storySubscriber{
 		pubsub:       ps,
 		increaselike: increase,
@@ -28,6 +28,7 @@ func (sbr *storySubscriber) Init() {
 		ctx := context.Background()
 		subscribe, c, err := sbr.pubsub.Subscribe(ctx, common.ReactedStoryTopic)
 		if err != nil {
+			log.Println("Failed to subscribe to topic:", err)
 			return
 		}
 

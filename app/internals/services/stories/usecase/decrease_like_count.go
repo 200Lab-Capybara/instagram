@@ -1,11 +1,11 @@
-package usecase
+package storyusecase
 
 import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"instagram/app/internals/services/stories/model"
+	storiesmodel "instagram/app/internals/services/stories/model"
 	"instagram/common"
 )
 
@@ -22,7 +22,7 @@ func (uc *decreaseLikeCountUseCase) Execute(ctx context.Context, storyId uuid.UU
 	_, err := uc.decrease.GetById(ctx, storyId)
 	if err != nil {
 		if errors.Is(gorm.ErrRecordNotFound, err) {
-			return false, model.ErrStoryNotFound
+			return false, storiesmodel.ErrStoryNotFound
 		}
 		return false, common.ErrDB(err)
 	}
@@ -38,6 +38,6 @@ type DecreaseLikeCountUseCase interface {
 	Execute(ctx context.Context, storyId uuid.UUID) (bool, error)
 }
 type DecreaseLikeCountRepo interface {
-	GetById(ctx context.Context, storyId uuid.UUID) (*model.Story, error)
+	GetById(ctx context.Context, storyId uuid.UUID) (*storiesmodel.Story, error)
 	DecreaseLikeCount(ctx context.Context, storyId uuid.UUID) (bool, error)
 }

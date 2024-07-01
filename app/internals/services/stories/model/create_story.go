@@ -1,4 +1,4 @@
-package model
+package storiesmodel
 
 type CreateStory struct {
 	ImageUrl string `json:"image_url"`
@@ -6,5 +6,4 @@ type CreateStory struct {
 	Width    int    `json:"width"`
 	Height   int    `json:"height"`
 	Content  string `json:"content_story"`
-	Storage  string `json:"storage_name"`
 }

@@ -1,10 +1,10 @@
-package usecase
+package storyusecase
 
 import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
-	"instagram/app/internals/services/stories/model"
+	storiesmodel "instagram/app/internals/services/stories/model"
 	"instagram/common"
 	"instagram/components/pubsub"
 	"time"
@@ -22,7 +22,7 @@ func NewCreateStoryUC(createstory CreateStoryRepo, pubsub pubsub.MessageBroker) 
 	}
 }
 
-func (uc createStoryUC) Execute(ctx context.Context, requester common.Requester, dto model.CreateStory) (*uuid.UUID, error) {
+func (uc createStoryUC) Execute(ctx context.Context, requester common.Requester, dto *storiesmodel.CreateStory) (*uuid.UUID, error) {
 	userId := requester.UserId()
 	storyId, err := uuid.NewV7()
 	if err != nil {
@@ -33,7 +33,7 @@ func (uc createStoryUC) Execute(ctx context.Context, requester common.Requester,
 		return nil, fmt.Errorf("failed to generate imageId: %w", err)
 	}
 
-	story := &model.Story{
+	story := &storiesmodel.Story{
 		Id:      storyId,
 		UserId:  userId,
 		Content: dto.Content,
@@ -47,7 +47,7 @@ func (uc createStoryUC) Execute(ctx context.Context, requester common.Requester,
 			Status:      common.ImageUsed,
 			CreatedAt:   time.Now().UTC(),
 			UpdatedAt:   time.Now().UTC(),
-			StorageName: dto.Storage,
+			StorageName: "AWS S3",
 		},
 		ReactCount:  0,
 		IsActive:    true,
@@ -101,8 +101,8 @@ func (uc createStoryUC) Execute(ctx context.Context, requester common.Requester,
 }
 
 type CreateStoryUC interface {
-	Execute(ctx context.Context, requester common.Requester, dto model.CreateStory) (*uuid.UUID, error)
+	Execute(ctx context.Context, requester common.Requester, dto *storiesmodel.CreateStory) (*uuid.UUID, error)
 }
 type CreateStoryRepo interface {
-	CreateStory(ctx context.Context, story *model.Story) (*uuid.UUID, error)
+	CreateStory(ctx context.Context, story *storiesmodel.Story) (*uuid.UUID, error)
 }

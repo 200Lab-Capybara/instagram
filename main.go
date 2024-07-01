@@ -54,6 +54,7 @@ func main() {
 	builder.BuildReactPostService(con, v1)
 	builder.BuildPostService(con, v1, natsCon, authMiddleware)
 	builder.BuildReactStoryService(con, v1)
+	builder.BuildStoryService(con, v1, natsCon, authMiddleware)
 
 	v1.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
