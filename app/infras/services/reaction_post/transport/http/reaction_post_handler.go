@@ -6,13 +6,18 @@ import (
 )
 
 type reactionPostHandler struct {
-	uc reactionpostusecase.LikePostUseCase
+	reactionPostUC    reactionpostusecase.ReactionPostUseCase
+	getUserLikePostUC reactionpostusecase.GetUserLikePostUseCase
 }
 
-func NewReactionPostHandler(uc reactionpostusecase.LikePostUseCase) *reactionPostHandler {
-	return &reactionPostHandler{uc: uc}
+func NewReactionPostHandler(reactionPostUC reactionpostusecase.ReactionPostUseCase, getUserLikePostUC reactionpostusecase.GetUserLikePostUseCase) *reactionPostHandler {
+	return &reactionPostHandler{
+		reactionPostUC:    reactionPostUC,
+		getUserLikePostUC: getUserLikePostUC,
+	}
 }
 
-func (hdl *reactionPostHandler) RegisterV1Router(r *gin.RouterGroup) {
-	r.POST("/posts/:id/like", hdl.ReactPostHandler())
+func (hdl *reactionPostHandler) RegisterV1Router(r *gin.RouterGroup, middleware gin.HandlerFunc) {
+	r.POST("/posts/:id/react", middleware, hdl.ReactPostHandler())
+	r.GET("/posts/:id/likes", middleware, hdl.GetUserLikePostHandler())
 }

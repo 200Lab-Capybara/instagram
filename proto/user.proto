@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option go_package = "instagram/pb";
+package pb;
+
+message GetUserByIdReq {
+  string id = 1;
+}
+
+message GetUserByIdsReq{
+  repeated string ids = 1;
+}
+
+message PublicUserInfo {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string role = 4;
+  string email = 5;
+  string status = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message PublicUserInfoResp {
+  PublicUserInfo user = 1;
+}
+
+message PublicUsersInfosResp {
+  repeated PublicUserInfo users = 1;
+}
+
+service UserService {
+  rpc GetUserById(GetUserByIdReq) returns (PublicUserInfoResp);
+  rpc GetUserByIds(GetUserByIdsReq) returns (PublicUsersInfosResp);
+}

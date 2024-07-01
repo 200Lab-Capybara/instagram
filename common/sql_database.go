@@ -9,5 +9,5 @@ func NewSQLDatabase(con *gorm.DB) SQLDatabase {
 }
 
 func (d *database) GetConnection() *gorm.DB {
-	return d.con.Session(&gorm.Session{NewDB: true})
+	return d.con.Session(&gorm.Session{NewDB: false})
 }

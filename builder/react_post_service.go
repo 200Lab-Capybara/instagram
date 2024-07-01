@@ -2,17 +2,28 @@ package builder
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nats-io/nats.go"
+	reactionpostapi "instagram/app/infras/services/reaction_post/repository/api"
 	reactionpostmysql "instagram/app/infras/services/reaction_post/repository/mysql"
 	"instagram/app/infras/services/reaction_post/repository/rpc_client"
 	reactionposthttp "instagram/app/infras/services/reaction_post/transport/http"
 	reactionpostusecase "instagram/app/internals/services/reaction_post/usecase"
 	"instagram/common"
+	"instagram/components/pubsub/natspubsub"
 )
 
-func BuildReactPostService(con common.SQLDatabase, v1 *gin.RouterGroup) {
+func BuildReactPostService(con common.SQLDatabase, nat *nats.Conn, v1 *gin.RouterGroup, middleware gin.HandlerFunc) {
 	reactionRepo := reactionpostmysql.NewMySQLStorage(con)
 	getPostRepo := rpc_client.NewGetPostRepo(con)
-	reactionUC := reactionpostusecase.NewLikePostUseCase(reactionRepo, getPostRepo)
-	reactionHDL := reactionposthttp.NewReactionPostHandler(reactionUC)
-	reactionHDL.RegisterV1Router(v1)
+	getUserInfoRepo := rpc_client.NewGetUserInfoRepo(con)
+
+	baseURL := reactionpostapi.NewReactionPostApi("http://localhost:8001/internal/v1/rpc")
+
+	ps := natspubsub.NewNatsProvider(nat)
+
+	reactionUC := reactionpostusecase.NewLikePostUseCase(reactionRepo, getPostRepo, ps)
+	getUserLikePostUC := reactionpostusecase.GetUserLikePostUC(reactionRepo, getPostRepo, getUserInfoRepo, baseURL)
+
+	reactionHDL := reactionposthttp.NewReactionPostHandler(reactionUC, getUserLikePostUC)
+	reactionHDL.RegisterV1Router(v1, middleware)
 }

@@ -42,7 +42,7 @@ func RequiredAuth(authStore AuthStore, provider tokenprovider.Provider) gin.Hand
 		userId := claims.GetUserID()
 		user, err := authStore.FindUserById(c.Request.Context(), userId)
 		if err != nil {
-			if errors.Is(err, usermodel.UserNotFound) {
+			if errors.Is(err, usermodel.ErrUserNotFound) {
 				c.JSON(http.StatusUnauthorized, common.NewUnauthorized(ErrorUnauthorized, ErrorUnauthorized.Error(), "invalid_token"))
 				c.Abort()
 				return
@@ -59,7 +59,7 @@ func RequiredAuth(authStore AuthStore, provider tokenprovider.Provider) gin.Hand
 			return
 		}
 
-		requester := common.NewRequester(user.ID, user.FirstName, user.LastName, user.Role.String(), user.Status.String())
+		requester := common.NewRequester(user.ID, user.FirstName, user.LastName, user.Role.String(), user.Status.String(), user.Follower, user.Following)
 
 		c.Set(common.RequesterKey, requester)
 

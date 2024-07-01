@@ -8,16 +8,16 @@ import (
 )
 
 var (
-	UserNotFound            = errors.New("user not found")
-	UserAlreadyExists       = errors.New("user already exists")
-	UserEmailIsRequired     = errors.New("email is required")
-	UserEmailInvalid        = errors.New("email is invalid")
-	UserFirstNameIsRequired = errors.New("first name is required")
-	UserLastNameIsRequired  = errors.New("last name is required")
-	UserPasswordIsRequired  = errors.New("password is required")
-	UserPasswordLength      = errors.New("password must be at least 8 characters long")
-	ErrorInvalidEmailOrPass = errors.New("invalid email or password")
-	ErrorUserBanded         = errors.New("user is baned")
+	ErrUserNotFound            = errors.New("user not found")
+	ErrUserAlreadyExists       = errors.New("user already exists")
+	ErrUserEmailIsRequired     = errors.New("email is required")
+	ErrUserEmailInvalid        = errors.New("email is invalid")
+	ErrUserFirstNameIsRequired = errors.New("first name is required")
+	ErrUserLastNameIsRequired  = errors.New("last name is required")
+	ErrUserPasswordIsRequired  = errors.New("password is required")
+	ErrUserPasswordLength      = errors.New("password must be at least 8 characters long")
+	ErrInvalidEmailOrPass      = errors.New("invalid email or password")
+	ErrUserBanded              = errors.New("user is baned")
 )
 
 type User struct {
@@ -28,6 +28,8 @@ type User struct {
 	Password  string            `json:"password" gorm:"column:password"`
 	Salt      string            `json:"salt" gorm:"column:salt"`
 	Role      common.UserRole   `json:"role" gorm:"column:role"`
+	Follower  int               `json:"follower" gorm:"column:follower"`
+	Following int               `json:"following" gorm:"column:following"`
 	Status    common.UserStatus `json:"status" gorm:"column:status"`
 	CreatedAt *time.Time        `json:"created_at" gorm:"column:created_at"`
 	UpdatedAt *time.Time        `json:"updated_at" gorm:"column:updated_at"`
