@@ -44,8 +44,8 @@ func main() {
 	builder.BuildUserService(con, bcrypt, accessTokenProvider, v1, authMiddleware)
 	builder.BuildReactPostService(con, v1)
 	builder.BuildReactStoryService(con, v1)
-	builder.BuildAddingHashTagService(con, v1)
-	
+	builder.BuildHashTagService(con, v1)
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
